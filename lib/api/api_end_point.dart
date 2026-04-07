@@ -20,6 +20,8 @@ class ApiEndPoint {
   // POPULAR VIDEOS
   final String popularVideos = 'videos/popular';
 
+  final String natureVideos = 'videos/search?query=nature';
+
 }
 
 /*
@@ -36,7 +38,7 @@ class APIClient {
       BaseOptions(
         baseUrl: apiEndPoint.baseUrl,
         headers: {
-          'Authorization' : '5b3qDE1Fzm8WfzCDyupWBAytX9kAbncQI4Ob2pnTe1OQdAghetKciM60',
+          'Authorization' : '',
         },
         connectTimeout: const Duration(minutes: 5),
         receiveTimeout: const Duration(minutes: 3),
