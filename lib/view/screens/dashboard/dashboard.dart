@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/video_bloc.dart';
+import '../../widgets/video_item.dart';
+
+class Dashboard extends StatelessWidget {
+  const Dashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: BlocBuilder<VideoBloc, VideoState>(
+        builder: (context, state) {
+
+          if (state is VideoStateInitial) {
+            context.read<VideoBloc>().add(FetchVideos());
+          }
+
+          if (state is VideoStateLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is VideoStateLoaded) {
+            return PageView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: state.videos.length,
+              onPageChanged: (index) {
+                if (index == state.videos.length - 2) {
+                  context.read<VideoBloc>().add(LoadMoreVideos());
+                }
+              },
+              itemBuilder: (context, index) {
+                return VideoItem(video: state.videos[index]);
+              },
+            );
+          }
+
+          if(state is VideoStateError){
+            return Center(child: Text(state.message));
+          }
+
+          return const SizedBox();
+        },
+      ),
+    );
+
+
+  }
+}
