@@ -15,20 +15,19 @@ void main() {
         providers: [
           BlocProvider(create: (_) => VideoBloc(apiService))
         ],
-        child: MyApp() //videoBloc: VideoBloc(apiService))
+        child: MyApp()
       )
   );
 }
 
 class MyApp extends StatelessWidget {
-  //final VideoBloc videoBloc;
 
-  const MyApp({super.key,});  //required this.videoBloc});
+  const MyApp({super.key,});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //showPerformanceOverlay: true,
+      showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
       home: const Dashboard()
