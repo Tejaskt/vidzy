@@ -1,63 +1,82 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/video_bloc.dart';
-import '../../widgets/video_item.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:vidzy/res/app_fonts.dart';
+import 'package:vidzy/res/app_strings.dart';
+import 'package:vidzy/view/screens/reel/reel_screen.dart';
 
-class Dashboard extends StatefulWidget {
+class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
-
-  @override
-  State<Dashboard> createState() => _DashboardState();
-}
-
-class _DashboardState extends State<Dashboard> {
-
-  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<VideoBloc, VideoState>(
-        buildWhen: (prev, curr) => prev != curr ,
-        builder: (context, state) {
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        centerTitle: true,
+        title: Text(AppStrings.appName, style: AppFonts.txtStyle),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(
+              width: .infinity,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Card(
+                  color: Colors.deepPurpleAccent.shade100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      textAlign: .center,
+                      'Choose Category of videos',
+                      style: AppFonts.txtStyle.copyWith(
+                        color: Colors.lightGreenAccent,
+                        fontSize: 20.sp
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
-          if (state is VideoStateInitial) {
-            context.read<VideoBloc>().add(FetchVideos());
-          }
-
-          if (state is VideoStateLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state is VideoStateLoaded) {
-            return PageView.builder(
-              allowImplicitScrolling: true,
-              scrollDirection: Axis.vertical,
-              itemCount: state.videos.length,
-              onPageChanged: (index) {
-                setState(() {
-                  currentIndex = index;
-                });
-
-                if (index == state.videos.length - 2) {
-                  context.read<VideoBloc>().add(LoadMoreVideos());
-                }
-              },
-              itemBuilder: (context, index) {
-                return VideoItem(video: state.videos[index], isActive : index == currentIndex);
-              },
-            );
-          }
-
-          if(state is VideoStateError){
-            return Center(child: Text(state.message));
-          }
-
-          return const SizedBox();
-        },
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: AppStrings.categoryList.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 10,
+                ),
+                itemBuilder: (context, index) {
+                  final item = AppStrings.categoryList[index];
+                  return GestureDetector(
+                    onTap: (){
+                      //context.read<VideoBloc>().add(FetchVideos(category: item));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ReelScreen(category: item),));
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurpleAccent.shade100,
+                        borderRadius: BorderRadius.all(Radius.circular(32)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          item.toUpperCase(),
+                          style: AppFonts.txtStyle.copyWith(
+                            color: Colors.lightGreenAccent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
-
-
   }
 }

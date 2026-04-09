@@ -28,7 +28,7 @@ class ErrorHandler {
         return AppException("Request cancelled");
 
       default:
-        return AppException("Something went wrong");
+        return AppException("Something went wrong ${error.message}");
     }
   }
 }

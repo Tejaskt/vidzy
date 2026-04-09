@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:vidzy/core/component/shimmer_effect.dart';
 import '../../api/model/video_model.dart';
 
 class VideoItem extends StatefulWidget {
@@ -15,6 +17,7 @@ class VideoItem extends StatefulWidget {
 class _VideoItemState extends State<VideoItem> {
   late VideoPlayerController _controller;
   bool isInitialized = false;
+
 
   @override
   void initState() {
@@ -43,10 +46,17 @@ class _VideoItemState extends State<VideoItem> {
   void didUpdateWidget(covariant VideoItem oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    // if(oldWidget.video.videoUrl != widget.video.videoUrl){
+    //   _controller.dispose();
+    //   isInitialized = false;
+    //   cont
+    // }
+
     if (widget.isActive && !oldWidget.isActive) {
       _controller.play();
     } else if (!widget.isActive && oldWidget.isActive) {
       _controller.pause();
+      //_controller.dispose();
     }
   }
 
@@ -58,10 +68,12 @@ class _VideoItemState extends State<VideoItem> {
 
   @override
   Widget build(BuildContext context) {
-    return _controller.value.isInitialized
-        ? Stack(
+
+    return isInitialized
+    ? Stack(
             fit: StackFit.expand,
             children: [
+
               FittedBox(
                 fit: .cover,
                 child: SizedBox(
@@ -78,7 +90,7 @@ class _VideoItemState extends State<VideoItem> {
                   color: Colors.green.shade300,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(widget.video.quality ?? 'hd'),
+                    child: Text(widget.video.quality ?? 'N/A'),
                   ),
                 ),
               ),
@@ -109,6 +121,10 @@ class _VideoItemState extends State<VideoItem> {
               ),
             ],
           )
-        : Image.network(widget.video.thumbnail, fit: .cover);
+        : CachedNetworkImage(
+        imageUrl: widget.video.thumbnail,
+        fit: .cover,
+      placeholder: (_, _) => ShimmerEffect(),
+    );
   }
 }

@@ -7,12 +7,13 @@ class VideoService {
   final Dio dio;
   VideoService(this.dio);
 
-  Future<List<VideoModel>> fetchVideos({int page = 1}) async{
+  Future<List<VideoModel>> fetchVideos({required int page, required String category}) async{
     final response = await dio.get(
-        apiEndPoint.natureVideos,
+        apiEndPoint.categoryVideos,
       queryParameters: {
+        'query' : category,
         'page' : page,
-        'per_page' : 10,
+        'per_page' : 5,
       }
     );
 

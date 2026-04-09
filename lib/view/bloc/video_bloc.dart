@@ -22,14 +22,14 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
   }
 
   Future<void> _onFetch(FetchVideos event, Emitter<VideoState> emit) async {
-
     emit(VideoStateLoading());
 
-    //page = 1;
+    page = 1;
     _hasReachedEnd = false;
+    _videos.clear();
 
     try {
-      final videos = await apiService.fetchVideos(page: page);
+      final videos = await apiService.fetchVideos(page: page, category: event.category);
 
       _videos = videos;
 
@@ -49,13 +49,14 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     if (_hasReachedEnd || state is VideoStateLoading) return;
 
     try {
-      final moreVideos = await apiService.fetchVideos(page : page + 1);
+      page++;
+      final moreVideos = await apiService.fetchVideos(page : page, category: event.category);
 
       if (moreVideos.isEmpty) {
         _hasReachedEnd = true;
         emit(VideoStateLoaded(videos: _videos, hasReachedEnd: true));
       } else {
-        page++;
+        page--;
         _videos = [..._videos, ...moreVideos];
 
         emit(VideoStateLoaded(videos: _videos, hasReachedEnd: false));

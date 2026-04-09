@@ -20,7 +20,7 @@ class ApiEndPoint {
   // POPULAR VIDEOS
   final String popularVideos = 'videos/popular';
 
-  final String natureVideos = 'videos/search?query=nature';
+  final String categoryVideos = 'videos/search';
 
 }
 

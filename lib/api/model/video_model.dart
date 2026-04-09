@@ -22,13 +22,6 @@ class VideoModel {
       orElse: () => files.first,
     );
 
-    // final filtered = files.where((file) {
-    //   return file['height'] > file['width'] &&
-    //       file['quality'] != 'uhd';
-    // }).toList();
-
-    //final selected = filtered.isNotEmpty ? filtered.first : files.first;
-
     return VideoModel(
       id: json['id'],
       videoUrl: filtered['link'],

@@ -2,10 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'app_colors.dart';
 
+
+
 class AppFonts {
 
   /// ------ Private internal constructor ------
   AppFonts._i();
+
+  static String lato = 'Lato';
 
   static TextStyle latoRegular = TextStyle (
    color: AppColors.black,
@@ -13,7 +17,7 @@ class AppFonts {
   );
 
   static final txtStyle = TextStyle(
-    fontFamily: 'Lato',
+    fontFamily: lato,
     fontSize: 18.sp,
     fontWeight: .bold,
   );

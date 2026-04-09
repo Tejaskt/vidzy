@@ -7,6 +7,20 @@ sealed class VideoEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FetchVideos extends VideoEvent {}
+class FetchVideos extends VideoEvent {
+  final String category;
 
-class LoadMoreVideos extends VideoEvent{}
+  const FetchVideos({required this.category});
+
+  @override
+  List<Object?> get props => [category];
+}
+
+class LoadMoreVideos extends VideoEvent{
+  final String category;
+
+  const LoadMoreVideos({required this.category});
+
+  @override
+  List<Object?> get props => [category];
+}
