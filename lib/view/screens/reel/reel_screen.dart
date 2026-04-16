@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../core/component/shimmer_effect.dart';
 import '../../bloc/video_bloc.dart';
 import '../../widgets/video_item.dart';
 
 class ReelScreen extends StatefulWidget {
+
   final String category;
   const ReelScreen({super.key, required this.category });
 
@@ -35,7 +35,7 @@ class _ReelScreenState extends State<ReelScreen> {
           // }
 
           if (state is VideoStateLoading) {
-            return const ShimmerEffect();//Center(child: CircularProgressIndicator());
+            return const ShimmerEffect();
           }
 
           if (state is VideoStateLoaded) {

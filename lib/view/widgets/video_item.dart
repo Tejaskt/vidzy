@@ -18,7 +18,6 @@ class _VideoItemState extends State<VideoItem> {
   late VideoPlayerController _controller;
   bool isInitialized = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -68,12 +67,10 @@ class _VideoItemState extends State<VideoItem> {
 
   @override
   Widget build(BuildContext context) {
-
     return isInitialized
-    ? Stack(
+        ? Stack(
             fit: StackFit.expand,
             children: [
-
               FittedBox(
                 fit: .cover,
                 child: SizedBox(
@@ -122,9 +119,12 @@ class _VideoItemState extends State<VideoItem> {
             ],
           )
         : CachedNetworkImage(
-        imageUrl: widget.video.thumbnail,
-        fit: .cover,
-      placeholder: (_, _) => ShimmerEffect(),
-    );
+            imageUrl: widget.video.thumbnail,
+            fit: .cover,
+            placeholder: (_, _) => ShimmerEffect(),
+          );
+
+    //Image.network(widget.video.thumbnail);
+    //ShimmerEffect();
   }
 }
