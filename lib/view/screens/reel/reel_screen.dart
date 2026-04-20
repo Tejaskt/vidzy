@@ -53,7 +53,10 @@ class _ReelScreenState extends State<ReelScreen> {
                 }
               },
               itemBuilder: (context, index) {
-                return VideoItem(video: state.videos[index], isActive : index == currentIndex);
+                return VideoItem(
+                  video: state.videos[index],
+                  isActive: index == currentIndex,
+                );
               },
             );
           }

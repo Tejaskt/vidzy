@@ -3,17 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:vidzy/api/api_client.dart';
 import 'package:vidzy/api/service/video_service.dart';
-import 'package:vidzy/core/utils/constants.dart';
+import 'package:vidzy/core/utils/private.dart';
 import 'package:vidzy/view/bloc/video_bloc.dart';
 import 'package:vidzy/view/screens/dashboard/dashboard.dart';
 
 void main() {
-  final dio = DioClient(Constants.apiKey).dio;
+  final dio = DioClient(Private.apiKey).dio;
   final apiService = VideoService(dio);
 
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => VideoBloc(apiService))],
+      providers: [
+        BlocProvider(create: (_) => VideoBloc(apiService))
+      ],
       child: MyApp(),
     ),
   );
