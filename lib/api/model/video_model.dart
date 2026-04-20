@@ -18,7 +18,7 @@ class VideoModel {
 
     // FILTER LOGIC
     final filtered = files.firstWhere(
-      (file) => file['quality'] == 'hd',
+      (file) => file['quality'] == 'sd',
       orElse: () => files.first,
     );
 

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:vidzy/res/app_strings.dart';
 
 class AppException implements Exception {
   final String message;
@@ -14,21 +15,21 @@ class ErrorHandler {
   static AppException handle(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
-        return AppException("Connection timeout");
+        return AppException(AppStrings.connectionTimeOUt);
 
       case DioExceptionType.receiveTimeout:
-        return AppException("Receive timeout");
+        return AppException(AppStrings.receiveTimeOut);
 
       case DioExceptionType.badResponse:
         return AppException(
-          error.response?.data["message"] ?? "Server error",
+          error.response?.data["message"] ?? AppStrings.serverError,
         );
 
       case DioExceptionType.cancel:
-        return AppException("Request cancelled");
+        return AppException(AppStrings.requestCancelled);
 
       default:
-        return AppException("Something went wrong ${error.message}");
+        return AppException("${AppStrings.somethingWentWrong} ${error.message}");
     }
   }
 }

@@ -1,7 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:vidzy/core/component/shimmer_effect.dart';
+import 'package:vidzy/core/constants.dart';
+import 'package:vidzy/res/app_colors.dart';
+import 'package:vidzy/res/app_strings.dart';
 import '../../api/model/video_model.dart';
 
 class VideoItem extends StatefulWidget {
@@ -45,17 +49,10 @@ class _VideoItemState extends State<VideoItem> {
   void didUpdateWidget(covariant VideoItem oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // if(oldWidget.video.videoUrl != widget.video.videoUrl){
-    //   _controller.dispose();
-    //   isInitialized = false;
-    //   cont
-    // }
-
     if (widget.isActive && !oldWidget.isActive) {
       _controller.play();
     } else if (!widget.isActive && oldWidget.isActive) {
       _controller.pause();
-      //_controller.dispose();
     }
   }
 
@@ -67,64 +64,60 @@ class _VideoItemState extends State<VideoItem> {
 
   @override
   Widget build(BuildContext context) {
-    return isInitialized
-        ? Stack(
-            fit: StackFit.expand,
-            children: [
-              FittedBox(
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+
+        isInitialized
+            ? FittedBox(
                 fit: .cover,
                 child: SizedBox(
                   width: _controller.value.size.width,
                   height: _controller.value.size.height,
                   child: VideoPlayer(_controller),
                 ),
+              )
+            : CachedNetworkImage(
+                imageUrl: widget.video.thumbnail,
+                fit: .cover,
+                placeholder: (_, _) => ShimmerEffect(),
               ),
 
-              Positioned(
-                top: 20,
-                right: 10,
-                child: Card(
-                  color: Colors.green.shade300,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(widget.video.quality ?? 'N/A'),
+        Positioned(
+          top: 20.sp,
+          right: 10.sp,
+          child: Card(
+            color: AppColors.green300,
+            child: Padding(
+              padding: EdgeInsets.all(Constants.padding8),
+              child: Text(widget.video.quality ?? AppStrings.notAvailable),
+            ),
+          ),
+        ),
+
+        Positioned(
+          bottom: 20.sp,
+          left: 10.sp,
+          child: Column(
+            children: [
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(Constants.padding8),
+                  child: Text(
+                    '@${widget.video.userName}',
+                    style: TextStyle(
+                      color: AppColors.black,
+                      fontWeight: .bold,
+                      fontSize: constants.fontSize18px,
+                      shadows: [Shadow(blurRadius: 4, color: AppColors.black)],
+                    ),
                   ),
                 ),
               ),
-
-              Positioned(
-                bottom: 20,
-                left: 10,
-                child: Column(
-                  children: [
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '@${widget.video.userName}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: .bold,
-                            fontSize: 18,
-                            shadows: [
-                              Shadow(blurRadius: 4, color: Colors.black54),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
-          )
-        : CachedNetworkImage(
-            imageUrl: widget.video.thumbnail,
-            fit: .cover,
-            placeholder: (_, _) => ShimmerEffect(),
-          );
-
-    //Image.network(widget.video.thumbnail);
-    //ShimmerEffect();
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vidzy/res/spaces.dart';
 import '../../../core/component/shimmer_effect.dart';
+import '../../../res/app_colors.dart';
+import '../../../res/app_fonts.dart';
 import '../../bloc/video_bloc.dart';
 import '../../widgets/video_item.dart';
 
@@ -26,6 +29,14 @@ class _ReelScreenState extends State<ReelScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.deepPurpleAccent,
+        centerTitle: true,
+        title: Text(
+          widget.category.toUpperCase(),
+          style: AppFonts.txtStyle.copyWith(color: AppColors.white),
+        ),
+      ),
       body: BlocBuilder<VideoBloc, VideoState>(
         buildWhen: (prev, curr) => prev != curr ,
         builder: (context, state) {
@@ -65,7 +76,7 @@ class _ReelScreenState extends State<ReelScreen> {
             return Center(child: Text(state.message));
           }
 
-          return const SizedBox();
+          return spaceH0;
         },
       ),
     );

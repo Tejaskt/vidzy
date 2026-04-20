@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:vidzy/core/constants.dart';
+import 'package:vidzy/res/app_colors.dart';
 import 'package:vidzy/res/app_fonts.dart';
 import 'package:vidzy/res/app_strings.dart';
+import 'package:vidzy/res/spaces.dart';
 import 'package:vidzy/view/screens/reel/reel_screen.dart';
 
 class Dashboard extends StatelessWidget {
@@ -11,70 +13,73 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: AppColors.deepPurpleAccent,
         centerTitle: true,
-        title: Text(AppStrings.appName, style: AppFonts.txtStyle),
+        title: Text(
+          AppStrings.appName,
+          style: AppFonts.txtStyle.copyWith(color: AppColors.white),
+        ),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(
-              width: .infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: Constants.padding16),
+          child: Column(
+            children: [
+              spaceH10,
+              SizedBox(
+                width: .infinity,
                 child: Card(
-                  color: Colors.deepPurpleAccent.shade100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      textAlign: .center,
-                      'Choose Category of videos',
-                      style: AppFonts.txtStyle.copyWith(
-                        color: Colors.lightGreenAccent,
-                        fontSize: 20.sp
-                      ),
+                  color: AppColors.deepPurpleAccent,
+                  child: Text(
+                    textAlign: .center,
+                    AppStrings.chooseCategory,
+                    style: AppFonts.txtStyle.copyWith(
+                      color: AppColors.lightGreenAccent,
+                      fontSize: constants.fontSize20px,
                     ),
                   ),
                 ),
               ),
-            ),
-
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: AppStrings.categoryList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 10,
-                ),
-                itemBuilder: (context, index) {
-                  final item = AppStrings.categoryList[index];
-                  return GestureDetector(
-                    onTap: (){
-                      //context.read<VideoBloc>().add(FetchVideos(category: item));
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ReelScreen(category: item),));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.deepPurpleAccent.shade100,
-                        borderRadius: BorderRadius.all(Radius.circular(32)),
-                      ),
-                      child: Center(
-                        child: Text(
-                          item.toUpperCase(),
-                          style: AppFonts.txtStyle.copyWith(
-                            color: Colors.lightGreenAccent,
+              spaceH10,
+              Expanded(
+                child: GridView.builder(
+                  itemCount: AppStrings.categoryList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                  ),
+                  itemBuilder: (context, index) {
+                    final item = AppStrings.categoryList[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReelScreen(category: item),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.deepPurpleAccent,
+                          borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadius16)),
+                        ),
+                        child: Center(
+                          child: Text(
+                            item.toUpperCase(),
+                            style: AppFonts.txtStyle.copyWith(
+                              color: AppColors.lightGreenAccent,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
