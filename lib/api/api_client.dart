@@ -1,38 +1,56 @@
 import 'package:dio/dio.dart';
-import 'api_end_point.dart';
 
-//APIClient apiClient = APIClient();
 class DioClient {
+  static final DioClient _dioClient = DioClient._internal();
 
-  late Dio _dio;
-  Dio get dio => _dio;
+  DioClient._internal();
 
-  DioClient(String apiKey) {
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: apiEndPoint.baseUrl,
-        headers: {
-          'Authorization': apiKey,
-        },
-        connectTimeout: const Duration(minutes: 5),
-        receiveTimeout: const Duration(minutes: 3),
-      ),
-    );
+  factory DioClient() => _dioClient;
 
-    _dio.interceptors.add(_logInterceptor());
+  final Map<String, Dio> _instances = {};
+
+
+  /// putIfAbsent has two parameters(key, dio function)
+  /// key in our case is baseUrl: everytime it will check if baseUrl exists in map it will return the dio object in our case.
+  /// now if value is not in map. value will be added in the map so next time when it get called it will return same dio...
+
+  Dio getInstance({required String baseUrl,Map<String,dynamic>? headers}){
+    return _instances.putIfAbsent(baseUrl, () => _createDio(baseUrl,headers),);
   }
 
-  Interceptor _logInterceptor() {
-    return LogInterceptor(
-      responseBody: true,
-      request: true,
-      responseHeader: true,
-      requestHeader: true,
-      requestBody: true,
-      error: true,
+  Dio _createDio(String baseUrl, Map<String,dynamic>? headers)
+  {
+
+    final dio = Dio(
+        BaseOptions(
+            baseUrl: baseUrl,
+            connectTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 5)
+        )
     );
+
+    dio.interceptors.addAll(
+        [
+          InterceptorsWrapper(
+            onRequest: (options, handler) {
+              options.headers = {
+                "Content-Type" : "application/json",
+                ...?headers,
+              };
+              handler.next(options);
+            }
+          ),
+          LogInterceptor(
+              responseBody: true,
+              error: true
+          )
+        ]
+    );
+
+    return dio;
   }
 
 }
+
 
 

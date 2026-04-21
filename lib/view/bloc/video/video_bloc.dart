@@ -10,13 +10,13 @@ part 'video_event.dart';
 part 'video_state.dart';
 
 class VideoBloc extends Bloc<VideoEvent, VideoState> {
-  final VideoService apiService;
+
 
   int page = 1;
   List<VideoModel> _videos = [];
   bool _hasReachedEnd = false;
 
-  VideoBloc(this.apiService) : super(VideoStateInitial()) {
+  VideoBloc() : super(VideoStateInitial()) {
     on<FetchVideos>(_onFetch);
     on<LoadMoreVideos>(_onLoadMore);
   }
@@ -29,7 +29,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     _videos.clear();
 
     try {
-      final videos = await apiService.fetchVideos(page: page, category: event.category);
+      final videos = await VideoService().fetchVideos(page: page, category: event.category);
 
       _videos = videos;
 
@@ -50,7 +50,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
 
     try {
       page++;
-      final moreVideos = await apiService.fetchVideos(page : page, category: event.category);
+      final moreVideos = await VideoService().fetchVideos(page : page, category: event.category);
 
       if (moreVideos.isEmpty) {
         _hasReachedEnd = true;

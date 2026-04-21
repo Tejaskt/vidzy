@@ -4,7 +4,7 @@ import 'package:vidzy/res/spaces.dart';
 import '../../../core/component/shimmer_effect.dart';
 import '../../../res/app_colors.dart';
 import '../../../res/app_fonts.dart';
-import '../../bloc/video_bloc.dart';
+import '../../bloc/video/video_bloc.dart';
 import '../../widgets/video_item.dart';
 
 class ReelScreen extends StatefulWidget {
@@ -67,6 +67,7 @@ class _ReelScreenState extends State<ReelScreen> {
                 return VideoItem(
                   video: state.videos[index],
                   isActive: index == currentIndex,
+                  postIndex: currentIndex + 1,
                 );
               },
             );
