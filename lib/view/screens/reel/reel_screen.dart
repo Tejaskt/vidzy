@@ -41,10 +41,6 @@ class _ReelScreenState extends State<ReelScreen> {
         buildWhen: (prev, curr) => prev != curr ,
         builder: (context, state) {
 
-          // if (state is VideoStateInitial) {
-             //context.read<VideoBloc>().add(FetchVideos(category: ));
-          // }
-
           if (state is VideoStateLoading) {
             return const ShimmerEffect();
           }

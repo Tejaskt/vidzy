@@ -16,7 +16,7 @@ class Dashboard extends StatelessWidget {
         backgroundColor: AppColors.deepPurpleAccent,
         centerTitle: true,
         title: Text(
-          AppStrings.appName,
+          AppStrings.appName.toUpperCase(),
           style: AppFonts.txtStyle.copyWith(color: AppColors.white),
         ),
       ),

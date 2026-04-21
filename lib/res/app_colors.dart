@@ -12,7 +12,9 @@ class AppColors {
   static const Color redAccent = Colors.redAccent;
   static final Color? listTileLabel  = Colors.grey[600];
   static const Color red = Colors.red;
+  static final Color? likeColor = Colors.red[300];
   static const Color orange = Colors.orange;
+  static const Color  purple = Colors.purple;
   static final Color? deepPurpleAccent = Colors.deepPurpleAccent[100];
   static const Color lightGreenAccent  = Colors.lightGreenAccent;
   static final Color? green300 = Colors.green[300];

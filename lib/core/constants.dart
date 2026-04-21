@@ -21,6 +21,9 @@ class Constants {
   static final double cornerRadius40 = 40.sp;
   static final double cardCornerRadius = 18.sp;
 
+  static final double bottomSheetScrollerWidth = 30.sp;
+  static final double bottomSheetScrollerHeight = 10.sp;
+
   static final double controlHeight = 28.sp;
   static final double buttonHeight = 4.sp;
   static final double logoutButtonHeight = 24.sp;

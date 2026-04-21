@@ -16,7 +16,11 @@ class AppStrings {
   /// dashboard screen
   static const String chooseCategory = 'Choose Category';
 
-  /// video item
+  /// Video Item Quality
   static const String notAvailable = 'N/A';
+
+  /// comment bottom sheet
+ static const String comments = 'Comments';
+ static const String noComments = 'No comments yet.';
 
 }
