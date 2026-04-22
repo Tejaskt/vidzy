@@ -19,9 +19,11 @@ class ApiEndPoint {
 
   /// BASE URL FOR COMMENTS
   final String baseUrlComment = 'https://dummyjson.com/comments/post/';
-  // POPULAR VIDEOS
+
+  /// POPULAR VIDEOS
   final String popularVideos = 'videos/popular';
 
+  /// SEARCH QUERY VIDEOS
   final String categoryVideos = 'videos/search';
 
 }

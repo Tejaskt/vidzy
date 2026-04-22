@@ -56,7 +56,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
         _hasReachedEnd = true;
         emit(VideoStateLoaded(videos: _videos, hasReachedEnd: true));
       } else {
-        page--;
+        //page--;
         _videos = [..._videos, ...moreVideos];
 
         emit(VideoStateLoaded(videos: _videos, hasReachedEnd: false));

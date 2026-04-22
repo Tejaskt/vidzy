@@ -40,7 +40,7 @@ class _VideoItemState extends State<VideoItem> {
       context: context,
       isScrollControlled: true,
       builder: (context) => BlocProvider.value(
-          value: context.read<CommentBloc>(),
+        value: context.read<CommentBloc>(),
         child: bottomSheet(),
       ),
     );
@@ -174,6 +174,7 @@ class _VideoItemState extends State<VideoItem> {
                   ),
                 ),
               ),
+
               // Header
               BlocBuilder<CommentBloc, CommentState>(
                 buildWhen: (p, c) => c is CommentLoaded || c is CommentLoading,
@@ -244,7 +245,7 @@ class _VideoItemState extends State<VideoItem> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
 
-                                // Avatar from first letter of fullName
+                                // AVATAR FOR FIRST LETTER OF FULL NAME
                                 CircleAvatar(
                                   radius: Constants.cornerRadius16,
                                   child: Text(
@@ -257,6 +258,7 @@ class _VideoItemState extends State<VideoItem> {
 
                                 SpaceW10(),
 
+                                // COMMENT CONTENT
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:

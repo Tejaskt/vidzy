@@ -6,9 +6,6 @@ class AppRoutes {
 
   static Map<String, WidgetBuilder> routes = {
     RouteName.home: (_) => Dashboard(),
-    //RouteName.reel: (_) => ReelScreen(category: '',)
-
+    //RouteName.reel: (_) => ReelScreen()
   };
-
-
 }

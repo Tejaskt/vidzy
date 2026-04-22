@@ -20,7 +20,6 @@ class DioClient {
 
   Dio _createDio(String baseUrl, Map<String,dynamic>? headers)
   {
-
     final dio = Dio(
         BaseOptions(
             baseUrl: baseUrl,
@@ -46,10 +45,8 @@ class DioClient {
           )
         ]
     );
-
     return dio;
   }
-
 }
 
 
