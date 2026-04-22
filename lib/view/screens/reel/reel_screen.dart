@@ -47,15 +47,15 @@ class _ReelScreenState extends State<ReelScreen> {
 
           if (state is VideoStateLoaded) {
             return PageView.builder(
+              itemCount: state.videos.length,
               allowImplicitScrolling: true,
               scrollDirection: Axis.vertical,
-              itemCount: state.videos.length,
               onPageChanged: (index) {
                 setState(() {
                   currentIndex = index;
                 });
 
-                if (index == state.videos.length - 2) {
+                if (index >= state.videos.length - 3) {
                   context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
                 }
               },

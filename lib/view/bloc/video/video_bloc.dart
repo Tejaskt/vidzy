@@ -12,9 +12,9 @@ part 'video_state.dart';
 class VideoBloc extends Bloc<VideoEvent, VideoState> {
 
 
-  int page = 1;
-  List<VideoModel> _videos = [];
+  int _page = 1;
   bool _hasReachedEnd = false;
+  final List<VideoModel> _videos = [];
 
   VideoBloc() : super(VideoStateInitial()) {
     on<FetchVideos>(_onFetch);
@@ -24,16 +24,16 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
   Future<void> _onFetch(FetchVideos event, Emitter<VideoState> emit) async {
     emit(VideoStateLoading());
 
-    page = 1;
+    _page = 1;
     _hasReachedEnd = false;
     _videos.clear();
 
     try {
-      final videos = await VideoService().fetchVideos(page: page, category: event.category);
+      final videos = await VideoService().fetchVideos(page: _page, category: event.category);
 
-      _videos = videos;
+      _videos.addAll(videos);
 
-      emit(VideoStateLoaded(videos: _videos, hasReachedEnd: false));
+      emit(VideoStateLoaded(videos: List.from(_videos), hasReachedEnd: false));
     } on DioException catch (e) {
       emit(VideoStateError(ErrorHandler.handle(e).message));
     } catch (e) {
@@ -48,18 +48,17 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
 
     if (_hasReachedEnd || state is VideoStateLoading) return;
 
+    _page++;
+
     try {
-      page++;
-      final moreVideos = await VideoService().fetchVideos(page : page, category: event.category);
+      final moreVideos = await VideoService().fetchVideos(page : _page, category: event.category);
 
       if (moreVideos.isEmpty) {
         _hasReachedEnd = true;
-        emit(VideoStateLoaded(videos: _videos, hasReachedEnd: true));
+        //emit(VideoStateLoaded(videos: _videos, hasReachedEnd: true));
       } else {
-        //page--;
-        _videos = [..._videos, ...moreVideos];
-
-        emit(VideoStateLoaded(videos: _videos, hasReachedEnd: false));
+        _videos.addAll(moreVideos); // [..._videos, ...moreVideos];
+        emit(VideoStateLoaded(videos: List.from(_videos), hasReachedEnd: _hasReachedEnd));
       }
     } on DioException catch (e) {
       emit(VideoStateError(ErrorHandler.handle(e).message));

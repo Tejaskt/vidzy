@@ -14,7 +14,8 @@ class VideoService {
   );
 
   Future<List<VideoModel>> fetchVideos({
-    required int page, required String category
+    required int page,
+    required String category
   }) async {
     final response = await _dio.get(
         apiEndPoint.categoryVideos,

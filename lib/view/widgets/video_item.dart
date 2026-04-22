@@ -35,17 +35,6 @@ class _VideoItemState extends State<VideoItem> {
     _initialize();
   }
 
-  void commentClicked(){
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => BlocProvider.value(
-        value: context.read<CommentBloc>(),
-        child: bottomSheet(),
-      ),
-    );
-  }
-
   Future<void> _initialize() async {
     await _controller.initialize();
 
@@ -133,7 +122,17 @@ class _VideoItemState extends State<VideoItem> {
           bottom: 20.sp,
           right: 10.sp,
           child: IconButton(
-                onPressed: commentClicked,
+                onPressed: (){
+                  context.read<CommentBloc>().add(FetchComments(widget.postIndex));
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => BlocProvider.value(
+                      value: context.read<CommentBloc>(),
+                      child: bottomSheet(),
+                    ),
+                  );
+                },
                 icon: Icon(
                   Icons.comment_rounded,
                   color: AppColors.white,
@@ -152,165 +151,133 @@ class _VideoItemState extends State<VideoItem> {
   }
 
   Widget bottomSheet(){
-    context.read<CommentBloc>().add(FetchComments(widget.postIndex));
-    return DraggableScrollableSheet(
-      expand: false,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadius20)),
-          ),
-          child: Column(
-            children: [
-              // Drag handle
-              Center(
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: Constants.padding10),
-                  width: Constants.bottomSheetScrollerWidth,
-                  height: Constants.bottomSheetScrollerHeight,
-                  decoration: BoxDecoration(
-                    color: AppColors.listTileLabel,
-                    borderRadius: BorderRadius.circular(Constants.cornerRadius6),
-                  ),
-                ),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadius20)),
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Center(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: Constants.padding10),
+              width: Constants.bottomSheetScrollerWidth,
+              height: Constants.bottomSheetScrollerHeight,
+              decoration: BoxDecoration(
+                color: AppColors.listTileLabel,
+                borderRadius: BorderRadius.circular(Constants.cornerRadius6),
               ),
+            ),
+          ),
 
-              // Header
-              BlocBuilder<CommentBloc, CommentState>(
-                buildWhen: (p, c) => c is CommentLoaded || c is CommentLoading,
-                builder: (context, state) {
-                  final count = state is CommentLoaded
-                      ? state.comment.length
-                      : null;
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Constants.padding16,
-                      vertical: Constants.padding4,
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          AppStrings.comments,
-                          style: AppFonts.txtStyle,
-                        ),
-                        if (count != null) ...[
-                          SpaceW8(),
+          Text(
+            AppStrings.comments,
+            style: AppFonts.txtStyle,
+          ),
 
-                          Text(
-                            '($count)',
-                            style: AppFonts.latoRegular,
-                          ),
-                        ],
-                      ],
+          Divider(height: 1.sp),
+
+          // Body
+          Expanded(
+            child: BlocBuilder<CommentBloc, CommentState>(
+              builder: (context, state) {
+                if (state is CommentLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is CommentError) {
+                  return Center(
+                    child: Text(
+                      state.message,
+                      style: const TextStyle(color: AppColors.red),
                     ),
                   );
-                },
-              ),
+                }
+                if (state is CommentLoaded) {
 
-              Divider(height: 1.sp),
+                  if (state.comment.isEmpty) {
+                    return const Center(child: Text(AppStrings.noComments));
+                  }
+                  return ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Constants.padding16,
+                      vertical: Constants.padding8,
+                    ),
+                    itemCount: state.comment.length,
+                    separatorBuilder: (_, _) => Divider(height: 1.sp),
 
-              // Body
-              Expanded(
-                child: BlocBuilder<CommentBloc, CommentState>(
-                  builder: (context, state) {
-                    if (state is CommentLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (state is CommentError) {
-                      return Center(
-                        child: Text(
-                          state.message,
-                          style: const TextStyle(color: AppColors.red),
-                        ),
-                      );
-                    }
-                    if (state is CommentLoaded) {
-                      if (state.comment.isEmpty) {
-                        return const Center(child: Text(AppStrings.noComments));
-                      }
-                      return ListView.separated(
-                        controller: scrollController,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Constants.padding16,
-                          vertical: Constants.padding8,
-                        ),
-                        itemCount: state.comment.length,
-                        separatorBuilder: (_, _) => Divider(height: 1.sp),
+                    itemBuilder: (context, index) {
+                      final c = state.comment[index];
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: Constants.padding10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
 
-                        itemBuilder: (context, index) {
-                          final c = state.comment[index];
-                          return Padding(
-                            padding: EdgeInsets.symmetric(vertical: Constants.padding10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                            // AVATAR FOR FIRST LETTER OF FULL NAME
+                            CircleAvatar(
+                              radius: Constants.cornerRadius16,
+                              child: Text(
+                                c!.user[0].toUpperCase(),
+                                style: AppFonts.latoRegular.copyWith(
+                                  fontSize: 16.sp
+                                )
+                              ),
+                            ),
 
-                                // AVATAR FOR FIRST LETTER OF FULL NAME
-                                CircleAvatar(
-                                  radius: Constants.cornerRadius16,
-                                  child: Text(
-                                    c!.user[0].toUpperCase(),
-                                    style: AppFonts.latoRegular.copyWith(
-                                      fontSize: 16.sp
-                                    )
+                            SpaceW10(),
+
+                            // COMMENT CONTENT
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '@${c.user}',
+                                    style: TextStyle(
+                                      color: AppColors.purple,
+                                      fontSize: constants.fontSize12px,
+                                    ),
                                   ),
-                                ),
+                                  SpaceH8(),
+                                  Text(
+                                    c.body,
+                                    style: AppFonts.latoRegular,
+                                  ),
+                                  SpaceH5(),
 
-                                SpaceW10(),
-
-                                // COMMENT CONTENT
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                  // Likes count
+                                  Row(
                                     children: [
-                                      Text(
-                                        '@${c.user}',
-                                        style: TextStyle(
-                                          color: AppColors.purple,
-                                          fontSize: constants.fontSize12px,
-                                        ),
+                                      Icon(
+                                        Icons.favorite,
+                                        size: Constants.size12px,
+                                        color: AppColors.likeColor
                                       ),
-                                      SpaceH8(),
+
+                                      SpaceW3(),
                                       Text(
-                                        c.body,
-                                        style: AppFonts.latoRegular,
-                                      ),
-                                      SpaceH5(),
-
-                                      // Likes count
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.favorite,
-                                            size: Constants.size12px,
-                                            color: AppColors.likeColor
-                                          ),
-
-                                          SpaceW3(),
-                                          Text(
-                                            '${c.likes}',
-                                            style: AppFonts.latoRegular
-                                          ),
-                                        ],
+                                        '${c.likes}',
+                                        style: AppFonts.latoRegular
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          );
-                        },
+                          ],
+                        ),
                       );
-                    }
-                    return SpaceH0();
-                  },
-                ),
-              ),
-            ],
+                    },
+                  );
+                }
+                return SpaceH0();
+              },
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
