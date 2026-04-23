@@ -22,11 +22,16 @@ class ErrorHandler {
 
       case DioExceptionType.badResponse:
         return AppException(
-          error.response?.data["message"] ?? AppStrings.serverError,
+          error.response?.data is Map
+          ? error.response?.data["message"] ?? AppStrings.serverError
+          : AppStrings.serverError
         );
 
       case DioExceptionType.cancel:
         return AppException(AppStrings.requestCancelled);
+
+      case DioExceptionType.connectionError :
+        return AppException('No Internet Connection');
 
       default:
         return AppException("${AppStrings.somethingWentWrong} ${error.message}");

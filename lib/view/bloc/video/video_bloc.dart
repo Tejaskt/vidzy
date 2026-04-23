@@ -36,9 +36,10 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
       emit(VideoStateLoaded(videos: List.from(_videos), hasReachedEnd: false));
     } on DioException catch (e) {
       emit(VideoStateError(ErrorHandler.handle(e).message));
-    } catch (e) {
-      emit(VideoStateError(e.toString()));
     }
+    // catch (e) {
+    //   emit(VideoStateError(e.toString()));
+    // }
   }
 
   Future<void> _onLoadMore(
@@ -58,12 +59,24 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
         //emit(VideoStateLoaded(videos: _videos, hasReachedEnd: true));
       } else {
         _videos.addAll(moreVideos); // [..._videos, ...moreVideos];
-        emit(VideoStateLoaded(videos: List.from(_videos), hasReachedEnd: _hasReachedEnd));
       }
+
+      emit(VideoStateLoaded(
+          videos: List.from(_videos),
+          hasReachedEnd: _hasReachedEnd,
+          errorMessage: null
+      ));
     } on DioException catch (e) {
-      emit(VideoStateError(ErrorHandler.handle(e).message));
-    } catch (e) {
-      emit(VideoStateError(e.toString()));
+      _page--;
+
+      emit(VideoStateLoaded(
+       videos: List.from(_videos),
+       hasReachedEnd: false,
+       errorMessage: ErrorHandler.handle(e).message
+      ));
     }
+    // catch (e) {
+    //   emit(VideoStateError(e.toString()));
+    // }
   }
 }

@@ -11,7 +11,7 @@ class AppStrings {
   static const String receiveTimeOut = 'Receive timeout';
   static const String serverError = 'Server Error';
   static const String requestCancelled = 'Request cancelled';
-  static const String somethingWentWrong = 'Something went wrong';
+  static const String somethingWentWrong = 'something went wrong';
 
   /// dashboard screen
   static const String chooseCategory = 'Choose Category';

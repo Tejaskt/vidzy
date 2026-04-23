@@ -85,6 +85,7 @@ class _VideoItemState extends State<VideoItem> {
           imageUrl: widget.video.thumbnail,
           fit: .cover,
           placeholder: (_, _) => ShimmerEffect(),
+          errorWidget: (context, url, error) => Center(child: Text(AppStrings.somethingWentWrong,style: AppFonts.txtStyle.copyWith(color: AppColors.red),)),
         ),
 
         Positioned(

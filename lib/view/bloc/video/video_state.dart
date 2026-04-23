@@ -17,14 +17,16 @@ final class VideoStateLoading extends VideoState {}
 final class VideoStateLoaded extends VideoState {
   final List<VideoModel> videos;
   final bool hasReachedEnd;
+  final String? errorMessage;
 
   const VideoStateLoaded({
     required this.videos,
     required this.hasReachedEnd,
+    this.errorMessage
   });
 
   @override
-  List<Object?> get props => [videos, hasReachedEnd];
+  List<Object?> get props => [videos, hasReachedEnd, errorMessage];
 }
 
 /// Error state (optional but recommended)

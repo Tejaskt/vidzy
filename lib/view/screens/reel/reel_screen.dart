@@ -45,35 +45,58 @@ class _ReelScreenState extends State<ReelScreen> {
             return const ShimmerEffect();
           }
 
-          if (state is VideoStateLoaded) {
-            return PageView.builder(
-              itemCount: state.videos.length,
-              allowImplicitScrolling: true,
-              scrollDirection: Axis.vertical,
-              onPageChanged: (index) {
-                setState(() {
-                  currentIndex = index;
-                });
+          // if(state is VideoStateError){
+          //   return Center(child: Text(state.message));
+          // }
 
-                if (index >= state.videos.length - 3) {
-                  context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
-                }
-              },
-              itemBuilder: (context, index) {
-                return VideoItem(
-                  video: state.videos[index],
-                  isActive: index == currentIndex,
-                  postIndex: currentIndex + 1,
-                );
-              },
+          if (state is VideoStateLoaded) {
+            return Stack(
+              children: [
+
+                PageView.builder(
+                  itemCount: state.videos.length,
+                  allowImplicitScrolling: true,
+                  scrollDirection: Axis.vertical,
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+
+                    if (index >= state.videos.length - 3) {
+                      context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
+                    }
+                  },
+                  itemBuilder: (context, index) {
+                    return VideoItem(
+                      video: state.videos[index],
+                      isActive: index == currentIndex,
+                      postIndex: currentIndex + 1,
+                    );
+                  },
+                ),
+
+                // ERROR OVERLAY (only when pagination fails)
+                if (state.errorMessage != null)
+                  Positioned(
+                    bottom: 50,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        color: Colors.black.withValues(alpha: 0.7),
+                        child: Text(
+                          state.errorMessage!,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             );
           }
 
-          if(state is VideoStateError){
-            return Center(child: Text(state.message));
-          }
-
-          return spaceH0;
+          return SpaceH0();
         },
       ),
     );
