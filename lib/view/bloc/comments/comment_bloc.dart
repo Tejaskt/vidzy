@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vidzy/api/model/comment_model.dart';
 import 'package:vidzy/api/service/comment_service.dart';
 import 'package:vidzy/core/error/app_exception.dart';
+import 'package:vidzy/res/app_strings.dart';
 
 part 'comment_event.dart';
 part 'comment_state.dart';
@@ -22,7 +23,12 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     _comments.clear();
     emit(CommentLoading());
     try{
-      final comments = await CommentService().fetchComments( postID: event.pageIndex);
+      final response = await CommentService.shared.fetchComments( postID: event.pageIndex);
+
+      final comments = response.data;
+
+      if(comments == null){
+        throw Exception(response.message ?? AppStrings.commentFetchError);      }
 
       _comments = comments;
       emit(CommentLoaded(comment: _comments));

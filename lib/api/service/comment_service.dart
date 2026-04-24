@@ -1,21 +1,18 @@
-import 'package:dio/dio.dart';
-
 import '../api_client.dart';
 import '../api_end_point.dart';
 import '../model/comment_model.dart';
 
 class CommentService {
-  final Dio _dio = DioClient().getInstance(
-    baseUrl: apiEndPoint.baseUrlComment
-  );
+  static var shared = CommentService();
 
-  Future<List<CommentModel?>> fetchComments({required int postID}) async {
-    final response = await _dio.get(
-        '$postID'
+  Future<ApiResponse<List<CommentModel?>>> fetchComments({required int postID}) async {
+    return client.request(
+        url: '${apiEndPoint.baseUrlComment}$postID',
+        method: HttpMethod.get,
+        fromJson: (data){
+          final List<dynamic> res = data['comments'];
+          return res.map((e) => CommentModel.fromJson(e)).toList();
+        }
     );
-
-    final List<dynamic> data = response.data['comments'];
-
-    return data.map((e) => CommentModel.fromJson(e)).toList();
   }
 }

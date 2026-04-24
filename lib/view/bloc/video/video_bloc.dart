@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vidzy/api/model/video_model.dart';
 import 'package:vidzy/api/service/video_service.dart';
 import 'package:vidzy/core/error/app_exception.dart';
+import 'package:vidzy/res/app_strings.dart';
 
 part 'video_event.dart';
 
@@ -29,7 +30,14 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     _videos.clear();
 
     try {
-      final videos = await VideoService().fetchVideos(page: _page, category: event.category);
+      final response = await VideoService.shared.fetchVideos(page: _page, category: event.category);
+
+      final videos = response.data;
+
+      if(videos == null){
+        //emit(VideoStateError(ErrorHandler.handle(response.message as DioException).toString()));
+        throw Exception(response.message ?? AppStrings.videoFetchError);
+      }
 
       _videos.addAll(videos);
 
@@ -37,9 +45,9 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     } on DioException catch (e) {
       emit(VideoStateError(ErrorHandler.handle(e).message));
     }
-    // catch (e) {
-    //   emit(VideoStateError(e.toString()));
-    // }
+    catch (e) {
+      emit(VideoStateError(e.toString()));
+    }
   }
 
   Future<void> _onLoadMore(
@@ -52,7 +60,13 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     _page++;
 
     try {
-      final moreVideos = await VideoService().fetchVideos(page : _page, category: event.category);
+      final response = await VideoService.shared.fetchVideos(page : _page, category: event.category);
+
+      final moreVideos = response.data;
+
+      if(moreVideos == null){
+        throw Exception(response.message ?? AppStrings.videoFetchError);
+      }
 
       if (moreVideos.isEmpty) {
         _hasReachedEnd = true;
@@ -75,8 +89,15 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
        errorMessage: ErrorHandler.handle(e).message
       ));
     }
-    // catch (e) {
-    //   emit(VideoStateError(e.toString()));
-    // }
+    catch (e) {
+      _page--;
+
+      emit(VideoStateLoaded(
+          videos: List.from(_videos),
+          hasReachedEnd: false,
+          errorMessage: e.toString()
+      ));
+
+    }
   }
 }

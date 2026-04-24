@@ -12,6 +12,8 @@ class AppStrings {
   static const String serverError = 'Server Error';
   static const String requestCancelled = 'Request cancelled';
   static const String somethingWentWrong = 'something went wrong';
+  static const String videoFetchError = 'Unable to Fetch the videos';
+  static const String commentFetchError = 'Unable to Fetch the comments';
 
   /// dashboard screen
   static const String chooseCategory = 'Choose Category';

@@ -1,22 +1,42 @@
-import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:vidzy/api/api_client.dart';
 import 'package:vidzy/api/api_end_point.dart';
 import 'package:vidzy/api/model/video_model.dart';
-import 'package:vidzy/core/utils/private.dart';
 
 class VideoService {
+  static var shared = VideoService();
 
-  final Dio _dio = DioClient().getInstance(
-    baseUrl: apiEndPoint.baseUrlVideo,
-    headers: {
-      "Authorization" : Private.apiKey
-    }
-  );
-
-  Future<List<VideoModel>> fetchVideos({
+  Future<ApiResponse<List<VideoModel>>> fetchVideos({
     required int page,
-    required String category
-  }) async {
+    required String category,
+  }) {
+    return client.request(
+      url: apiEndPoint.baseUrlVideo,
+      isAuth: true,
+      method: HttpMethod.get,
+      queryParams: {'query': category, 'page': page, 'per_page': 10},
+      fromJson: (data) {
+        debugPrint('your data here $data');
+        final List<dynamic> res = data['videos'];
+
+        return res.map((e) {
+          final json = e as Map<String, dynamic>;
+          final files = json['video_files'] as List;
+
+          // Filter Logic
+          final filtered = files.firstWhere(
+            (file) => file['quality'] == 'sd',
+            orElse: () => files.first,
+          );
+
+          return VideoModel.fromJson(json, filtered);
+        }).toList();
+      },
+    );
+  }
+
+  /*
+
     final response = await _dio.get(
         apiEndPoint.categoryVideos,
         queryParameters: {
@@ -41,4 +61,6 @@ class VideoService {
       return VideoModel.fromJson(json, filtered);
     }).toList();
   }
+
+     */
 }

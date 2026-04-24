@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vidzy/core/constants.dart';
 import 'package:vidzy/res/spaces.dart';
 import '../../../core/component/shimmer_effect.dart';
 import '../../../res/app_colors.dart';
@@ -45,9 +46,9 @@ class _ReelScreenState extends State<ReelScreen> {
             return const ShimmerEffect();
           }
 
-          // if(state is VideoStateError){
-          //   return Center(child: Text(state.message));
-          // }
+          if(state is VideoStateError){
+             return Center(child: Text(state.message));
+          }
 
           if (state is VideoStateLoaded) {
             return Stack(
@@ -55,7 +56,7 @@ class _ReelScreenState extends State<ReelScreen> {
 
                 PageView.builder(
                   itemCount: state.videos.length,
-                  allowImplicitScrolling: true,
+                  //allowImplicitScrolling: true,
                   scrollDirection: Axis.vertical,
                   onPageChanged: (index) {
                     setState(() {
@@ -83,11 +84,11 @@ class _ReelScreenState extends State<ReelScreen> {
                     right: 0,
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.all(10),
-                        color: Colors.black.withValues(alpha: 0.7),
+                        padding: EdgeInsets.all(Constants.padding10),
+                        color: AppColors.black.withValues(alpha: 0.7),
                         child: Text(
                           state.errorMessage!,
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: AppColors.white),
                         ),
                       ),
                     ),
@@ -104,3 +105,107 @@ class _ReelScreenState extends State<ReelScreen> {
 
   }
 }
+
+/*
+*
+* import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reel_bloc_new_version/features/feed/presentation/widgets/video_item.dart';
+
+import '../../bloc/feed_bloc.dart';
+
+class ReelScreen extends StatefulWidget {
+  const ReelScreen({super.key});
+
+  @override
+  State<ReelScreen> createState() => _ReelScreenState();
+}
+
+class _ReelScreenState extends State<ReelScreen> {
+  int _lastFetchedAtIndex = -1;
+  int _activeIndex = -1;
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+      ),
+      backgroundColor: Colors.black,
+      body: BlocBuilder<FeedBloc, FeedState>(
+        builder: (context, state) {
+          //it will display loading indicator until video gets loaded...
+          if (state is FeedLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.blue),
+            );
+          }
+
+          //it will display error of it occurs.
+          if (state is FeedErrorState) {
+            return Center(
+              child: Text(
+                state.message,
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          }
+
+          //it will display data
+          if (state is FeedSuccessState) {
+            return Stack(
+              children: [
+                ListView.separated(
+                  itemCount: state.reels.length,
+
+                  scrollDirection: Axis.vertical,
+                 separatorBuilder: (context, index) => Divider(color: Colors.white,),
+                  itemBuilder: (context, index) {
+                    final reel = state.reels[index];
+
+                    //this will fetch more data if available.
+                    //it will check currentIndex != last index. and will load when currentIndex is data's list.length - 3
+                    if (index >= state.reels.length - 3 &&
+                        index != _lastFetchedAtIndex) {
+                      _lastFetchedAtIndex = index;
+                      context.read<FeedBloc>().add(FetchMoreReelEvent());
+                    }
+
+                    return VideoItem(
+                      reel: reel,
+                      reelIndex: index,
+                      isActive: index == _activeIndex,
+                      onVisible: () {
+                        if(_activeIndex != index)
+                          {
+                            setState(() {
+                              _activeIndex = index;
+                            });
+                          }
+                      },
+                    );
+                  }
+                ),
+
+                if(state.isLoading)
+                  Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+              ],
+            );
+          }
+
+          return const SizedBox();
+        },
+      ),
+    );
+  }
+}
+
+*
+* */

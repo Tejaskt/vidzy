@@ -283,3 +283,268 @@ class _VideoItemState extends State<VideoItem> {
   }
 }
 
+/*
+* import 'package:better_player_plus/better_player_plus.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reel_bloc_new_version/features/comments/bloc/comment_bloc.dart';
+import 'package:reel_bloc_new_version/features/comments/presentation/comment_sheet.dart';
+import 'package:reel_bloc_new_version/features/feed/models/ReelModel.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
+class VideoItem extends StatefulWidget {
+
+  final ReelModel reel;
+  final int reelIndex;
+  final bool isActive;
+  final VoidCallback onVisible;
+
+  const VideoItem({super.key,required this.reel,required this.reelIndex, required this.isActive, required this.onVisible});
+
+  @override
+  State<VideoItem> createState() => _VideoItemState();
+}
+
+class _VideoItemState extends State<VideoItem> {
+  BetterPlayerController? _betterPlayerController;
+  bool _isInitialized = false;
+
+  void _initializePlayer(){
+
+    if(_betterPlayerController != null) return;
+
+    _betterPlayerController = BetterPlayerController(
+         const BetterPlayerConfiguration(
+            aspectRatio: 9/16,
+            autoPlay: true,
+            looping: true,
+            fit: .cover,
+            handleLifecycle: true,
+            //we are letting better player to handle lifecycle...
+            controlsConfiguration: const BetterPlayerControlsConfiguration(
+              showControls: false,
+            ),
+          ),
+          betterPlayerDataSource: BetterPlayerDataSource(
+            BetterPlayerDataSourceType.network,
+            widget.reel.videoUrl!,
+            cacheConfiguration: const BetterPlayerCacheConfiguration(
+              useCache: true
+            )
+          ),
+        );
+
+    _betterPlayerController!.addEventsListener((event) {
+      if(event.betterPlayerEventType == BetterPlayerEventType.initialized)
+        {
+          setState(() {
+            _isInitialized = true;
+          });
+        }
+    },);
+  }
+
+  @override
+  void didUpdateWidget(covariant VideoItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if(oldWidget.reel.videoUrl != widget.reel.videoUrl)
+      {
+        _isInitialized = false;
+      }
+
+    if(widget.isActive && _betterPlayerController == null)
+      {
+
+          setState(() {
+            _initializePlayer();
+          });
+      }
+
+    if(!widget.isActive && _betterPlayerController != null)
+      {
+        setState(() {
+          _disposePlayer();
+        });
+
+      }
+
+  }
+
+  void _disposePlayer() {
+    _betterPlayerController?.dispose();
+    _betterPlayerController = null;
+  }
+
+  @override
+  void dispose() {
+    _disposePlayer();
+     super.dispose();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return VisibilityDetector(
+      key: Key(widget.reel.videoUrl!),
+      onVisibilityChanged: (info) {
+        if (!mounted) return;
+        if (info.visibleFraction > 0.7) {
+          widget.onVisible();
+        }
+      },
+      child: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(5.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Header ──────────────────────
+              Row(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: widget.reel.userAvatar!,
+                    height: 6.h,
+                    width: 6.h,
+                  ),
+                  SizedBox(width: 2.w),
+                  Text(
+                    widget.reel.userName!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 2.w),
+
+              // ── Video or Thumbnail ───────────
+              AspectRatio(
+                aspectRatio: 9 / 16,
+                child: _betterPlayerController != null && _isInitialized
+                    ? BetterPlayer(controller: _betterPlayerController!) // ✅ safe
+                    : Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: widget.reel.thumbnail ?? '',
+                      fit: BoxFit.cover,
+                      errorWidget: (_, __, ___) =>
+                          Container(color: Colors.grey[900]),
+                    ),
+
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 2.w),
+
+              // ── Footer ──────────────────────
+              Row(
+                children: [
+                  Text(
+                    widget.reel.videoQuality!,
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      context.read<CommentBloc>().add(
+                        FetchCommentEvent(postIndex: widget.reelIndex + 1),
+                      );
+                      showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) => CommentSheet(),
+                      );
+                    },
+                    icon: Icon(Icons.comment, size: 5.w),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return VisibilityDetector(
+  //     key: Key(widget.reel.videoUrl!),
+  //     onVisibilityChanged: (info) {
+  //       if (!mounted) return;
+  //       // if(!(_betterPlayerController.isVideoInitialized() ?? false)) return;
+  //
+  //       if (info.visibleFraction > 0.7) {
+  //         widget.onVisible();
+  //       }
+  //
+  //     },
+  //     child: SafeArea(
+  //       child: Container(
+  //           padding: .all(5.w),
+  //           child: Column(
+  //             crossAxisAlignment: .start,
+  //               children: [
+  //                 Column(
+  //                   spacing: 2.w,
+  //                   children: [
+  //                     CachedNetworkImage(
+  //                       imageUrl: widget.reel.userAvatar!,
+  //                       height: 6.h,
+  //                       width: 6.w,
+  //                     ),
+  //                     Text(
+  //                       widget.reel.userName!,
+  //                       style: TextStyle(
+  //                           color: Colors.white,
+  //                           fontSize: 18.sp,
+  //                           fontWeight: .bold
+  //                       ),),
+  //                     Text(
+  //                         widget.reel.videoQuality!,
+  //                         style: const TextStyle(
+  //                             color: Colors.blue,
+  //                           fontWeight: .bold
+  //                         ),),
+  //                     // Spacer(),
+  //                     IconButton(onPressed: (){
+  //
+  //                       context.read<CommentBloc>().add(FetchCommentEvent(postIndex: widget.reelIndex + 1));
+  //                       showModalBottomSheet(
+  //                         backgroundColor: Colors.white,
+  //                         isScrollControlled: true,
+  //                         context: context,
+  //                         builder: (context) => CommentSheet(),);
+  //
+  //                     }, icon: Icon(Icons.comment,size: 5.w,),)
+  //                   ],
+  //                 ),
+  //
+  //                   BetterPlayer(controller: _betterPlayerController!),
+  //                  SizedBox(height: 300,)
+  //                  // ]),
+  //
+  //
+  //               ])),
+  //     ),
+  //   );
+  // }
+
+
+}
+
+*
+* */

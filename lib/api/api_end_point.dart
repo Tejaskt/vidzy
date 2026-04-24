@@ -14,8 +14,11 @@ class ApiEndPoint {
   static const String mimeURLEncoded = 'application/x-www-form-urlencoded';
   static const dynamic defaultRequestForCallBack = {"screen": "mobile"};
 
+  /// Default BaseUrl
+  final String baseUrl = '';
+
   /// BASE URL FOR VIDEOS
-  final String baseUrlVideo = 'https://api.pexels.com/v1/';
+  final String baseUrlVideo = 'https://api.pexels.com/v1/videos/search';
 
   /// BASE URL FOR COMMENTS
   final String baseUrlComment = 'https://dummyjson.com/comments/post/';

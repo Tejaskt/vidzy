@@ -21,8 +21,8 @@ class AppColors {
 
 
   /// shimmer effect
-  //static const Color baseColor = Colors.grey.shade300;
-  //static const Color highlightColor = Colors.grey.shade50;
+  static final Color baseColor = Colors.grey.shade300;
+  static final Color highlightColor = Colors.grey.shade50;
 
 
 
