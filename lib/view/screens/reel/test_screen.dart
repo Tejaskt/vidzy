@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vidzy/core/constants.dart';
 import 'package:vidzy/res/spaces.dart';
 import 'package:vidzy/view/widgets/test_item.dart';
-import '../../../core/component/shimmer_effect.dart';
 import '../../../res/app_colors.dart';
 import '../../../res/app_fonts.dart';
 import '../../bloc/video/video_bloc.dart';
@@ -18,6 +17,8 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
+
+  int _activeIndex = -1;
 
   @override
   void initState() {
@@ -39,11 +40,11 @@ class _TestScreenState extends State<TestScreen> {
         ),
       ),
       body: BlocBuilder<VideoBloc, VideoState>(
-        buildWhen: (prev, curr) => prev != curr ,
+        //buildWhen: (prev, curr) => prev != curr ,
         builder: (context, state) {
 
           if (state is VideoStateLoading) {
-            return const ShimmerEffect();
+            return Center(child: const CircularProgressIndicator());
           }
 
           if(state is VideoStateError){
@@ -67,10 +68,22 @@ class _TestScreenState extends State<TestScreen> {
                   //   }
                   // },
                   itemBuilder: (context, index) {
+
+                    if (index >= state.videos.length - 3) {
+                      context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
+                    }
+
                     return TestItem(
                       video: state.videos[index],
-                      isActive: index == currentIndex,
+                      isActive: index == _activeIndex,
                       postIndex: currentIndex + 1,
+                      onVisible : (){
+                        if(_activeIndex != index){
+                          setState(() {
+                            _activeIndex = index;
+                          });
+                        }
+                      }
                     );
                   },
                 ),
@@ -92,6 +105,7 @@ class _TestScreenState extends State<TestScreen> {
                       ),
                     ),
                   ),
+
               ],
             );
           }
@@ -100,7 +114,5 @@ class _TestScreenState extends State<TestScreen> {
         },
       ),
     );
-
-
   }
 }

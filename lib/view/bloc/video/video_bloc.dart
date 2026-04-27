@@ -11,8 +11,6 @@ part 'video_event.dart';
 part 'video_state.dart';
 
 class VideoBloc extends Bloc<VideoEvent, VideoState> {
-
-
   int _page = 1;
   bool _hasReachedEnd = false;
   final List<VideoModel> _videos = [];
@@ -40,21 +38,15 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
       }
 
       _videos.addAll(videos);
-
       emit(VideoStateLoaded(videos: List.from(_videos), hasReachedEnd: false));
     } on DioException catch (e) {
       emit(VideoStateError(ErrorHandler.handle(e).message));
-    }
-    catch (e) {
+    } catch (e) {
       emit(VideoStateError(e.toString()));
     }
   }
 
-  Future<void> _onLoadMore(
-    LoadMoreVideos event,
-    Emitter<VideoState> emit,
-  ) async {
-
+  Future<void> _onLoadMore(LoadMoreVideos event,Emitter<VideoState> emit) async {
     if (_hasReachedEnd || state is VideoStateLoading) return;
 
     _page++;

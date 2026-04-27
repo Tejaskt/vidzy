@@ -95,7 +95,7 @@ class _VideoItemState extends State<VideoItem> {
             color: AppColors.green300,
             child: Padding(
               padding: EdgeInsets.all(Constants.padding8),
-              child: Text(widget.video.quality ?? AppStrings.notAvailable),
+              child: Text(widget.video.quality ?? AppStrings.auto),
             ),
           ),
         ),

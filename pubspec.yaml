@@ -42,6 +42,7 @@ dependencies:
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
   better_player_plus: ^1.1.5
+  visibility_detector: ^0.4.0+2
 
 
 

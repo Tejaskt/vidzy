@@ -1,11 +1,4 @@
-ApiEndPoint apiEndPoint = ApiEndPoint();
-
 class ApiEndPoint {
-  static final ApiEndPoint _apiEndPoint = ApiEndPoint._i();
-
-  factory ApiEndPoint() {
-    return _apiEndPoint;
-  }
 
   ApiEndPoint._i();
 
@@ -15,18 +8,20 @@ class ApiEndPoint {
   static const dynamic defaultRequestForCallBack = {"screen": "mobile"};
 
   /// Default BaseUrl
-  final String baseUrl = '';
+  static const String baseUrl = '';
+
+  static const String baseUrlDummyJson = 'https://dummyjson.com';
 
   /// BASE URL FOR VIDEOS
-  final String baseUrlVideo = 'https://api.pexels.com/v1/videos/search';
+  static const String baseUrlVideo = 'https://api.pexels.com/v1/videos/search';
 
   /// BASE URL FOR COMMENTS
-  final String baseUrlComment = 'https://dummyjson.com/comments/post/';
+  static const String baseUrlComment = '$baseUrlDummyJson/comments/post/';
 
-  /// POPULAR VIDEOS
-  final String popularVideos = 'videos/popular';
+  /// BASE URL FOR POST
+  static const String baseUrlPost = '$baseUrlDummyJson/posts';
 
-  /// SEARCH QUERY VIDEOS
-  final String categoryVideos = 'videos/search';
+  /// BASE URL FOR USERS
+  static const String baseUrlUsers = '$baseUrlDummyJson/users/';
 
 }

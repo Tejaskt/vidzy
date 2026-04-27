@@ -11,7 +11,7 @@ class VideoService {
     required String category,
   }) {
     return client.request(
-      url: apiEndPoint.baseUrlVideo,
+      url: ApiEndPoint.baseUrlVideo,
       isAuth: true,
       method: HttpMethod.get,
       queryParams: {'query': category, 'page': page, 'per_page': 10},

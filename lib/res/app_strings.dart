@@ -14,12 +14,14 @@ class AppStrings {
   static const String somethingWentWrong = 'something went wrong';
   static const String videoFetchError = 'Unable to Fetch the videos';
   static const String commentFetchError = 'Unable to Fetch the comments';
+  static const String postFetchError = 'Unable to Fetch the posts';
+
 
   /// dashboard screen
   static const String chooseCategory = 'Choose Category';
 
   /// Video Item Quality
-  static const String notAvailable = 'N/A';
+  static const String auto = 'Auto';
 
   /// comment bottom sheet
  static const String comments = 'Comments';

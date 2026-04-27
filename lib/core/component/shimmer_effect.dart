@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vidzy/res/app_colors.dart';
-
-import '../constants.dart';
 
 class ShimmerEffect extends StatelessWidget {
   const ShimmerEffect({super.key});
@@ -20,6 +17,7 @@ class ShimmerEffect extends StatelessWidget {
             child: Container(color: AppColors.white),
           ),
 
+          /*
           Positioned(
             top: 20.sp,
             right: 10.sp,
@@ -65,6 +63,8 @@ class ShimmerEffect extends StatelessWidget {
               ),
             ),
           ),
+
+           */
         ],
       // ),
     );

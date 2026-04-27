@@ -16,7 +16,7 @@ class APIClient {
   }) async{
     Dio dio = Dio(
         BaseOptions(
-            baseUrl: apiEndPoint.baseUrl,
+            baseUrl: ApiEndPoint.baseUrl,
             connectTimeout: const Duration(seconds: 10),
             sendTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),

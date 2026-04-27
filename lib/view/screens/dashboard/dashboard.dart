@@ -4,7 +4,7 @@ import 'package:vidzy/res/app_colors.dart';
 import 'package:vidzy/res/app_fonts.dart';
 import 'package:vidzy/res/app_strings.dart';
 import 'package:vidzy/res/spaces.dart';
-import 'package:vidzy/view/screens/reel/reel_screen.dart';
+import 'package:vidzy/view/screens/reel/test_screen.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -56,7 +56,7 @@ class Dashboard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReelScreen(category: item),
+                            builder: (context) => TestScreen(category: item),
                           ),
                         );
                       },

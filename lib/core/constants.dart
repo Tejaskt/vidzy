@@ -10,7 +10,7 @@ class Constants {
   static final double cornerRadius4 = 4.sp;
   static final double cornerRadius6 = 6.sp;
   static final double cornerRadius8 = 8.sp;
-  static final double cornerRadius = 10.sp;
+  static final double cornerRadius10 = 10.sp;
   static final double cornerRadius12 = 12.sp;
   static final double cornerRadius14 = 14.sp;
   static final double cornerRadius16 = 16.sp;
@@ -37,6 +37,9 @@ class Constants {
   static final double padding16 = 16.sp;
   static final double padding20 = 20.sp;
 
+  static final double spacingRow6 = 10.sp;
+  static final double spacingColumn8 = 8.sp;
+
   static final double elevation = 4.sp;
 
   static final double borderWidth6px = 6.sp;
@@ -48,6 +51,7 @@ class Constants {
   static final double size15px = 15.sp;
   static final double size14px = 14.sp;
   static final double size12px = 14.sp;
+  static final double size5px = 14.sp;
 
   final double fontSize28px = 22.sp;
   final double fontSize24px = 20.sp;

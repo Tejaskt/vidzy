@@ -6,6 +6,8 @@ class AppColors {
 
   static const Color primary = Color.fromRGBO(0, 91, 191, 1);
   static const Color blue = Colors.blue;
+  static const Color grey = Colors.grey;
+  static final Color blueShade100 = Colors.blue.shade100;
   static const Color white = Colors.white;
   static const Color white70 = Colors.white70;
   static const Color black = Colors.black87;
@@ -21,8 +23,8 @@ class AppColors {
 
 
   /// shimmer effect
-  static final Color baseColor = Colors.grey.shade300;
-  static final Color highlightColor = Colors.grey.shade50;
+  static final Color baseColor = Colors.deepPurpleAccent.shade100;
+  static final Color highlightColor = Colors.purpleAccent.shade100;
 
 
 
