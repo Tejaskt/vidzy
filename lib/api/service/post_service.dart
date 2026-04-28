@@ -2,8 +2,6 @@ import 'package:vidzy/api/api_client.dart';
 import 'package:vidzy/api/api_end_point.dart';
 import 'package:vidzy/api/model/post_model.dart';
 
-import '../model/user_model.dart';
-
 class PostService {
   static var shared = PostService();
 
@@ -22,13 +20,4 @@ class PostService {
     );
   }
 
-  Future<ApiResponse<UserModel>> fetchUserImage({required int userId}) {
-    return client.request(
-        url: '${ApiEndPoint.baseUrlUsers}$userId',
-        method: .get,
-        fromJson: (data){
-          return UserModel.fromJson(data);
-        }
-    );
-  }
 }

@@ -7,7 +7,6 @@ import 'package:vidzy/core/component/shimmer_effect.dart';
 import 'package:vidzy/core/constants.dart';
 import 'package:vidzy/res/app_colors.dart';
 import 'package:vidzy/res/app_strings.dart';
-import 'package:vidzy/view/bloc/user/user_bloc.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../api/model/video_model.dart';
 import '../../res/app_fonts.dart';
@@ -60,11 +59,6 @@ class _TestItemState extends State<TestItem> {
         fit: .cover,
         controlsConfiguration: BetterPlayerControlsConfiguration(
           showControls: false,
-          // enableOverflowMenu: false,
-          // showControlsOnInitialize: false,
-          // enableFullscreen: false,
-          // enablePlayPause: false,
-          // enableSkips: false,
         ),
       ),
       betterPlayerDataSource: BetterPlayerDataSource(
@@ -144,34 +138,17 @@ class _TestItemState extends State<TestItem> {
               // ── Header ──────────────────────
               Row(
                 children: [
-                  // User image from dummy-json user.
-                  BlocBuilder<UserBloc, UserState>(
-                    buildWhen: (previous, current) => previous != current,
-                    builder: (context, state) {
 
-                      if (state is UserError) {
-                        debugPrint('error in User api : ${state.message}');
-                        return CircleAvatar(child: Icon(Icons.person));
-                      }
-
-                      if(state is UserLoading){
-                        return _smallLoader();
-                      }
-
-                      if (state is UserLoaded) {
-
-                        return CircleAvatar(
-                          backgroundImage: NetworkImage(state.userImage.imgUrl),
-                          // child: CachedNetworkImage(
-                          //   imageUrl: state,
-                          //   fit: .cover,
-                          // ),
-                        );
-
-                      }
-
-                      return CircleAvatar(child: Icon(Icons.person));
-                    }
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(Constants.cornerRadius40),
+                    child: CachedNetworkImage(
+                      width: 25.sp,
+                      height: 25.sp,
+                      fit: .cover,
+                      imageUrl: widget.video.thumbnail,
+                      placeholder: (context, url) => CircleAvatar(child: _smallLoader()),
+                      errorWidget: (context, url, error) => CircleAvatar(child: Icon(Icons.person)),
+                    ),
                   ),
 
                   SpaceW3(),
@@ -208,7 +185,6 @@ class _TestItemState extends State<TestItem> {
               BlocBuilder<PostBloc, PostState>(
                 buildWhen: (previous, current) => previous != current,
                 builder: (context, state) {
-
                   if (state is PostError) {
                     debugPrint('error in post api : ${state.message}');
                     return Text(
@@ -231,8 +207,6 @@ class _TestItemState extends State<TestItem> {
                     if (post == null) {
                       return _smallLoader();
                     }
-
-                    context.read<UserBloc>().add(FetchUserImage(userId: post.userId));
 
                     // --- Post Data ---\\
                     return Column(
