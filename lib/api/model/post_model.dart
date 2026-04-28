@@ -1,7 +1,7 @@
 class PostModel {
   final String title;
   final String body;
-  final List<String> tags;
+  final List<dynamic> tags;
   final int likes;
   final int dislikes;
   final int views;

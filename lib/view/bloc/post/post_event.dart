@@ -8,17 +8,9 @@ sealed class PostEvent extends Equatable {
 }
 
 class FetchPosts extends PostEvent{
-  final int skip;
-  const FetchPosts({required this.skip});
-
-  @override
-  List<Object?> get props => [skip];
+  const FetchPosts();
 }
 
 class LoadMorePosts extends PostEvent{
-  final int skip;
-  const LoadMorePosts(this.skip);
-
-  @override
-  List<Object?> get props => [skip];
+  const LoadMorePosts();
 }

@@ -7,11 +7,8 @@ class ShimmerEffect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-        fit: StackFit.expand,
-        children: [
-
-          Shimmer.fromColors(
+    return SizedBox(
+        child: Shimmer.fromColors(
             baseColor: AppColors.baseColor,
             highlightColor:  AppColors.highlightColor,
             child: Container(color: AppColors.white),
@@ -65,7 +62,7 @@ class ShimmerEffect extends StatelessWidget {
           ),
 
            */
-        ],
+        // ],
       // ),
     );
   }

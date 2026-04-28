@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vidzy/core/constants.dart';
 import 'package:vidzy/res/spaces.dart';
+import 'package:vidzy/view/bloc/post/post_bloc.dart';
 import 'package:vidzy/view/widgets/test_item.dart';
 import '../../../res/app_colors.dart';
 import '../../../res/app_fonts.dart';
@@ -24,6 +25,8 @@ class _TestScreenState extends State<TestScreen> {
   void initState() {
     super.initState();
     context.read<VideoBloc>().add(FetchVideos(category: widget.category));
+    context.read<PostBloc>().add(FetchPosts());
+    //context.read<PostBloc>().add(FetchUserImage());
   }
 
   int currentIndex = 0;
@@ -40,7 +43,7 @@ class _TestScreenState extends State<TestScreen> {
         ),
       ),
       body: BlocBuilder<VideoBloc, VideoState>(
-        //buildWhen: (prev, curr) => prev != curr ,
+        buildWhen: (prev, curr) => prev != curr ,
         builder: (context, state) {
 
           if (state is VideoStateLoading) {
@@ -58,25 +61,17 @@ class _TestScreenState extends State<TestScreen> {
                 ListView.builder(
                   itemCount: state.videos.length,
                   scrollDirection: Axis.vertical,
-                  // onPageChanged: (index) {
-                  //   setState(() {
-                  //     currentIndex = index;
-                  //   });
-                  //
-                  //   if (index >= state.videos.length - 3) {
-                  //     context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
-                  //   }
-                  // },
                   itemBuilder: (context, index) {
 
                     if (index >= state.videos.length - 3) {
                       context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
+                      context.read<PostBloc>().add(LoadMorePosts()) ;//state.videos.length));
                     }
 
                     return TestItem(
                       video: state.videos[index],
                       isActive: index == _activeIndex,
-                      postIndex: currentIndex + 1,
+                      postIndex: index,//currentIndex + 1,
                       onVisible : (){
                         if(_activeIndex != index){
                           setState(() {

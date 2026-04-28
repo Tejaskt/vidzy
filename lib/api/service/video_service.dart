@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:vidzy/api/api_client.dart';
 import 'package:vidzy/api/api_end_point.dart';
 import 'package:vidzy/api/model/video_model.dart';
@@ -16,7 +15,7 @@ class VideoService {
       method: HttpMethod.get,
       queryParams: {'query': category, 'page': page, 'per_page': 10},
       fromJson: (data) {
-        debugPrint('your data here $data');
+
         final List<dynamic> res = data['videos'];
 
         return res.map((e) {

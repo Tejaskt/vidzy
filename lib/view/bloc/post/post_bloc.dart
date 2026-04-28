@@ -11,8 +11,8 @@ part 'post_event.dart';
 part 'post_state.dart';
 
 class PostBloc extends Bloc<PostEvent, PostState> {
-  int _perPageItem = 10;
-  bool _haseReachEnd = false;
+  //int _perPageItem = 10;
+  bool _hasReachedEnd = false;
   final List<PostModel> _posts = [];
 
   PostBloc() : super(PostInitial()) {
@@ -23,13 +23,12 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   Future<void> _onFetch(FetchPosts event, Emitter<PostState> emit) async {
     emit(PostLoading());
 
-
-    _haseReachEnd = false;
+    _hasReachedEnd = false;
     _posts.clear();
+
 
     try {
       final response = await PostService.shared.fetchPosts();
-
       final posts = response.data;
 
       if (posts == null) {
@@ -47,12 +46,10 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   Future<void> _onLoadMore(LoadMorePosts event, Emitter<PostState> emit) async {
-    if (_haseReachEnd || state is PostLoading) return;
-
-    _perPageItem += 10;
+    if (_hasReachedEnd || state is PostLoading) return;
 
     try {
-      final response = await PostService.shared.fetchPosts(skip: _perPageItem);
+      final response = await PostService.shared.fetchPosts(skip: _posts.length);
 
       final morePost = response.data;
 
@@ -61,7 +58,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       }
 
       if (morePost.isEmpty) {
-        _haseReachEnd = true;
+        _hasReachedEnd = true;
       } else {
         _posts.addAll(morePost);
       }
@@ -69,12 +66,12 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       emit(
         PostLoaded(
           posts: List.from(_posts),
-          hasReachedEnd: _haseReachEnd,
+          hasReachedEnd: _hasReachedEnd,
           errorMessage: null,
         ),
       );
     } on DioException catch (e) {
-      _perPageItem -= 10;
+      //_perPageItem -= 10;
 
       emit(
         PostLoaded(
@@ -84,7 +81,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         ),
       );
     } catch (e) {
-      _perPageItem -= 10;
+      //_perPageItem -= 10;
 
       emit(
         PostLoaded(

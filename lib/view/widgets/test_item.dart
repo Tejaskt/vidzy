@@ -7,6 +7,7 @@ import 'package:vidzy/core/component/shimmer_effect.dart';
 import 'package:vidzy/core/constants.dart';
 import 'package:vidzy/res/app_colors.dart';
 import 'package:vidzy/res/app_strings.dart';
+import 'package:vidzy/view/bloc/user/user_bloc.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../../api/model/video_model.dart';
 import '../../res/app_fonts.dart';
@@ -142,25 +143,53 @@ class _TestItemState extends State<TestItem> {
             children: [
               // ── Header ──────────────────────
               Row(
-                mainAxisAlignment: .center,
                 children: [
                   // User image from dummy-json user.
-                  CircleAvatar(
-                    child: CachedNetworkImage(
-                      imageUrl: widget.video.thumbnail,
-                      fit: .cover,
-                    ),
+                  BlocBuilder<UserBloc, UserState>(
+                    buildWhen: (previous, current) => previous != current,
+                    builder: (context, state) {
+
+                      if (state is UserError) {
+                        debugPrint('error in User api : ${state.message}');
+                        return CircleAvatar(child: Icon(Icons.person));
+                      }
+
+                      if(state is UserLoading){
+                        return _smallLoader();
+                      }
+
+                      if (state is UserLoaded) {
+
+                        return CircleAvatar(
+                          backgroundImage: NetworkImage(state.userImage.imgUrl),
+                          // child: CachedNetworkImage(
+                          //   imageUrl: state,
+                          //   fit: .cover,
+                          // ),
+                        );
+
+                      }
+
+                      return CircleAvatar(child: Icon(Icons.person));
+                    }
                   ),
 
                   SpaceW3(),
-                  Text(
-                    widget.video.userName,
-                    style: AppFonts.latoRegular.copyWith(
-                      color: AppColors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: constants.fontSize18px,
+
+                  SizedBox(
+                    width: Constants.maxLength200.toDouble(),
+                    child: Text(
+                      softWrap: true,
+                      widget.video.userName,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppFonts.latoRegular.copyWith(
+                        color: AppColors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: constants.fontSize18px,
+                      ),
                     ),
                   ),
+
                   Spacer(),
 
                   Text(
@@ -177,32 +206,64 @@ class _TestItemState extends State<TestItem> {
               SpaceH10(),
 
               BlocBuilder<PostBloc, PostState>(
+                buildWhen: (previous, current) => previous != current,
                 builder: (context, state) {
-                  final postItem;
-                  if(state is PostLoaded){
-                    postItem = state.posts;
+
+                  if (state is PostError) {
+                    debugPrint('error in post api : ${state.message}');
+                    return Text(
+                      '${AppStrings.postFetchError} Error ${state.message}',
+                    );
                   }
 
-                    return Text(
-                      '' ,// remaining from here
-                      style: AppFonts.latoRegular.copyWith(
-                        fontSize: constants.fontSize16px,
-                        color: AppColors.purple,
-                      ),
+                  if (state is PostLoading) {
+                    //debugPrint('Post api is loading state : $state');
+                    return _smallLoader();
+                  }
+
+                  if (state is PostLoaded) {
+                    //debugPrint('post api is success : ${state.posts}');
+
+                    final post = state.posts.length > widget.postIndex
+                        ? state.posts[widget.postIndex]
+                        : null;
+
+                    if (post == null) {
+                      return _smallLoader();
+                    }
+
+                    context.read<UserBloc>().add(FetchUserImage(userId: post.userId));
+
+                    // --- Post Data ---\\
+                    return Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Text(
+                          post.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppFonts.latoRegular.copyWith(
+                            fontSize: constants.fontSize16px,
+                            color: AppColors.purple,
+                          ),
+                        ),
+
+                        SpaceH5(),
+
+                        Text(
+                          post.tags.map((tag) => '#$tag').join(' '),
+                          style: AppFonts.latoRegular.copyWith(
+                            fontSize: constants.fontSize16px,
+                            color: AppColors.blue,
+                            fontWeight: .bold,
+                          ),
+                        ),
+                      ],
                     );
+                  }
 
+                  return _smallLoader();
                 },
-              ),
-
-              SpaceH5(),
-
-              Text(
-                'tags: #insta',
-                style: AppFonts.latoRegular.copyWith(
-                  fontSize: constants.fontSize16px,
-                  color: AppColors.blue,
-                  fontWeight: .bold,
-                ),
               ),
 
               SpaceH10(),
@@ -228,54 +289,109 @@ class _TestItemState extends State<TestItem> {
               SpaceH10(),
 
               // ── Footer ──────────────────────
-              Text(
-                'body: His mother had always taught him not to ever think of himself as better than others. He tried to live by this motto. He never looked down on those who were less fortunate or who had less money than him. But the stupidity of the group of people he was talking to made him change his mind',
-                style: AppFonts.latoRegular.copyWith(color: AppColors.purple),
-              ),
+              BlocBuilder<PostBloc, PostState>(
+                buildWhen: (previous, current) => previous != current,
+                builder: (context, state) {
+                  if (state is PostError) {
+                    //debugPrint('error in post api : ${state.message}');
+                    return Text(
+                      '${AppStrings.postFetchError} Error ${state.message}',
+                    );
+                  }
 
-              SpaceH10(),
+                  if (state is PostLoading) {
+                    //debugPrint('Post api is loading state : $state');
+                    return _smallLoader();
+                  }
 
-              Row(
-                spacing: Constants.spacingRow6,
-                children: [
-                  reactionIcons(
-                    icon: Icons.remove_red_eye,
-                    value: '1000',
-                    color: AppColors.blue,
-                  ),
-                  reactionIcons(
-                    icon: Icons.favorite,
-                    value: '215',
-                    color: AppColors.red,
-                  ),
-                  reactionIcons(
-                    icon: Icons.thumb_down,
-                    value: '50',
-                    color: AppColors.grey,
-                  ),
+                  if (state is PostLoaded) {
+                    //debugPrint('post api is success : ${state.posts}');
 
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () {
-                      context.read<CommentBloc>().add(
-                        FetchComments(widget.postIndex + 1),
-                      );
-                      showModalBottomSheet(
-                        backgroundColor: AppColors.white,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) => commentSheet(),
-                      );
-                    },
-                    icon: Icon(Icons.comment, size: Constants.size24px),
-                  ),
-                ],
+                    final post = state.posts.length > widget.postIndex
+                        ? state.posts[widget.postIndex]
+                        : null;
+
+                    if (post == null) {
+                      return _smallLoader();
+                    }
+
+                    // --- Post Data ---\\
+                    return Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Text(
+                          post.body,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppFonts.latoRegular.copyWith(
+                            color: AppColors.purple,
+                          ),
+                        ),
+
+                        SpaceH10(),
+
+                        Row(
+                          spacing: Constants.spacingRow6,
+                          children: [
+                            reactionIcons(
+                              icon: Icons.remove_red_eye,
+                              value: post.views,
+                              color: AppColors.blue,
+                            ),
+                            reactionIcons(
+                              icon: Icons.favorite,
+                              value: post.likes,
+                              color: AppColors.red,
+                            ),
+                            reactionIcons(
+                              icon: Icons.thumb_down,
+                              value: post.dislikes,
+                              color: AppColors.grey,
+                            ),
+
+                            const Spacer(),
+
+                            IconButton(
+                              onPressed: () {
+                                context.read<CommentBloc>().add(
+                                  FetchComments(widget.postIndex + 1),
+                                );
+                                showModalBottomSheet(
+                                  backgroundColor: AppColors.white,
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) => commentSheet(),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.comment,
+                                size: Constants.size24px,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+
+                  return _smallLoader();
+                },
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _smallLoader() {
+    return ShimmerEffect();
+
+    //   SizedBox(
+    //   height: 20,
+    //   width: 20,
+    //   child: CircularProgressIndicator(strokeWidth: 2),
+    // );
   }
 
   Widget commentSheet() {
@@ -395,7 +511,7 @@ class _TestItemState extends State<TestItem> {
 
   Widget reactionIcons({
     required IconData icon,
-    required String value,
+    required int value,
     required Color color,
   }) {
     return Container(
@@ -411,7 +527,7 @@ class _TestItemState extends State<TestItem> {
         children: [
           Icon(icon, color: color),
           Text(
-            value,
+            value.toString(),
             style: AppFonts.latoRegular.copyWith(
               color: color,
               fontWeight: .bold,
@@ -422,211 +538,4 @@ class _TestItemState extends State<TestItem> {
       ),
     );
   }
-
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-
-        if(_betterPlayerController != null)
-          SizedBox.expand(child: BetterPlayer(controller: _betterPlayerController!)),
-
-        Positioned(
-          top: 10.sp,
-          right: 10.sp,
-          child: Card(
-            color: AppColors.green300,
-            child: Padding(
-              padding: EdgeInsets.all(Constants.padding8),
-              child: Text(widget.video.quality ?? AppStrings.notAvailable),
-            ),
-          ),
-        ),
-
-        Positioned(
-          bottom: 10.sp,
-          left: 10.sp,
-          child: Card(
-            child: Padding(
-              padding: EdgeInsets.all(Constants.padding8),
-              child: Text(
-                '@${widget.video.userName}',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: constants.fontSize18px,
-                  shadows: [
-                    Shadow(blurRadius: 4, color: AppColors.black)
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        Positioned(
-          bottom: 10.sp,
-          right: 10.sp,
-          child: IconButton(
-            onPressed: (){
-              context.read<CommentBloc>().add(FetchComments(widget.postIndex));
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => BlocProvider.value(
-                  value: context.read<CommentBloc>(),
-                  child: bottomSheet(),
-                ),
-              );
-            },
-            icon: Icon(
-              Icons.comment_rounded,
-              color: AppColors.white,
-              size: Constants.size24px,
-            ),
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.black,
-              padding: EdgeInsets.all(Constants.padding12),
-            ),
-          ),
-
-        ),
-
-      ],
-    );
-  }
-
-  Widget bottomSheet(){
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(Constants.cornerRadius20)),
-      ),
-      child: Column(
-        children: [
-          // Drag handle
-          Center(
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: Constants.padding10),
-              width: Constants.bottomSheetScrollerWidth,
-              height: Constants.bottomSheetScrollerHeight,
-              decoration: BoxDecoration(
-                color: AppColors.listTileLabel,
-                borderRadius: BorderRadius.circular(Constants.cornerRadius6),
-              ),
-            ),
-          ),
-
-          Text(
-            AppStrings.comments,
-            style: AppFonts.txtStyle,
-          ),
-
-          Divider(height: 1.sp),
-
-          // Body
-          Expanded(
-            child: BlocBuilder<CommentBloc, CommentState>(
-              builder: (context, state) {
-                if (state is CommentLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is CommentError) {
-                  return Center(
-                    child: Text(
-                      state.message,
-                      style: const TextStyle(color: AppColors.red),
-                    ),
-                  );
-                }
-                if (state is CommentLoaded) {
-
-                  if (state.comment.isEmpty) {
-                    return const Center(child: Text(AppStrings.noComments));
-                  }
-                  return ListView.separated(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Constants.padding16,
-                      vertical: Constants.padding8,
-                    ),
-                    itemCount: state.comment.length,
-                    separatorBuilder: (_, _) => Divider(height: 1.sp),
-
-                    itemBuilder: (context, index) {
-                      final c = state.comment[index];
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: Constants.padding10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-
-                            // AVATAR FOR FIRST LETTER OF FULL NAME
-                            CircleAvatar(
-                              radius: Constants.cornerRadius16,
-                              child: Text(
-                                  c!.user[0].toUpperCase(),
-                                  style: AppFonts.latoRegular.copyWith(
-                                      fontSize: 16.sp
-                                  )
-                              ),
-                            ),
-
-                            SpaceW10(),
-
-                            // COMMENT CONTENT
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '@${c.user}',
-                                    style: TextStyle(
-                                      color: AppColors.purple,
-                                      fontSize: constants.fontSize12px,
-                                    ),
-                                  ),
-                                  SpaceH8(),
-                                  Text(
-                                    c.body,
-                                    style: AppFonts.latoRegular,
-                                  ),
-                                  SpaceH5(),
-
-                                  // Likes count
-                                  Row(
-                                    children: [
-                                      Icon(
-                                          Icons.favorite,
-                                          size: Constants.size12px,
-                                          color: AppColors.likeColor
-                                      ),
-
-                                      SpaceW3(),
-                                      Text(
-                                          '${c.likes}',
-                                          style: AppFonts.latoRegular
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }
-                return SpaceH0();
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  */
 }
