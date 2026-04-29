@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:vidzy/core/utils/private.dart';
+import 'package:vidzy/res/app_strings.dart';
 
 import '../core/error/app_exception.dart';
 import 'api_end_point.dart';
-
 
 APIClient client = APIClient.shared;
 
@@ -100,28 +100,28 @@ class APIClient {
   }
 }
 
-catchError(DioException error) {
+Object catchError(DioException error) {
   if (error.type == DioExceptionType.connectionError) {
-    throw AppException("No internet connection", code: -1);
+    throw AppException(AppStrings.noInternet, code: -1);
   } else if (error.response != null) {
     final statusCode = error.response?.statusCode;
 
     switch (statusCode) {
       case 400:
-        throw AppException("Bad request", code: statusCode);
+        throw AppException(AppStrings.badRequest, code: statusCode);
       case 401:
-        throw AppException("Unauthorized", code: statusCode);
+        throw AppException(AppStrings.unAuthorized, code: statusCode);
       case 404:
-        throw AppException("Not found", code: statusCode);
+        throw AppException(AppStrings.recourseNotFound, code: statusCode);
       case 408:
-        throw AppException("Connection timeout", code: statusCode);
+        throw AppException(AppStrings.connectionTimeOUt, code: statusCode);
       case 500:
-        throw AppException("Server error", code: statusCode);
+        throw AppException(AppStrings.serverError, code: statusCode);
       default:
-        throw AppException("Something went wrong", code: statusCode);
+        throw AppException(AppStrings.somethingWentWrong, code: statusCode);
     }
   } else {
-    throw AppException("Unexpected error", code: -1);
+    throw AppException(AppStrings.unexpectedError, code: -1);
   }
 }
 

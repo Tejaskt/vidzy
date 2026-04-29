@@ -33,33 +33,4 @@ class VideoService {
       },
     );
   }
-
-  /*
-
-    final response = await _dio.get(
-        apiEndPoint.categoryVideos,
-        queryParameters: {
-          'query': category,
-          'page': page,
-          'per_page': 10,
-        }
-    );
-
-    final List<dynamic> data = response.data['videos'];
-
-    return data.map((e) {
-      final json = e as Map<String, dynamic>;
-      final files = json['video_files'] as List;
-
-      // Filter Logic
-      final filtered = files.firstWhere(
-            (file) => file['quality'] == 'sd',
-        orElse: () => files.first,
-      );
-
-      return VideoModel.fromJson(json, filtered);
-    }).toList();
-  }
-
-     */
 }

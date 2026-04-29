@@ -4,7 +4,7 @@ import 'package:vidzy/res/app_colors.dart';
 import 'package:vidzy/res/app_fonts.dart';
 import 'package:vidzy/res/app_strings.dart';
 import 'package:vidzy/res/spaces.dart';
-import 'package:vidzy/view/screens/reel/test_screen.dart';
+import 'package:vidzy/view/screens/reel/feed_screen.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -46,8 +46,8 @@ class Dashboard extends StatelessWidget {
                   itemCount: AppStrings.categoryList.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
+                    mainAxisSpacing: Constants.gridSpacing,
+                    crossAxisSpacing: Constants.gridSpacing,
                   ),
                   itemBuilder: (context, index) {
                     final item = AppStrings.categoryList[index];
@@ -56,7 +56,7 @@ class Dashboard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TestScreen(category: item),
+                            builder: (context) => FeedScreen(category: item),
                           ),
                         );
                       },

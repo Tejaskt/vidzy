@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:vidzy/res/app_strings.dart';
 
 class AppException implements Exception {
   final String message;
@@ -20,26 +21,26 @@ class ErrorHandler {
   static AppException handle(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
-        return AppException("Connection timeout", code: -1);
+        return AppException(AppStrings.connectionTimeOUt, code: -1);
 
       case DioExceptionType.sendTimeout:
-        return AppException("Send timeout", code: -1);
+        return AppException(AppStrings.sendTimeOut, code: -1);
 
       case DioExceptionType.receiveTimeout:
-        return AppException("Receive timeout", code: -1);
+        return AppException(AppStrings.receiveTimeOut, code: -1);
 
       case DioExceptionType.connectionError:
-        return AppException("No internet connection", code: -1);
+        return AppException(AppStrings.noInternet, code: -1);
 
       case DioExceptionType.cancel:
-        return AppException("Request cancelled", code: -1);
+        return AppException(AppStrings.requestCancelled, code: -1);
 
       case DioExceptionType.badResponse:
         return _handleStatusCode(error);
 
       case DioExceptionType.unknown:
       default:
-        return AppException("Unexpected error occurred", code: -1);
+        return AppException(AppStrings.unexpectedError, code: -1);
     }
   }
 
@@ -48,7 +49,7 @@ class ErrorHandler {
     final statusCode = error.response?.statusCode;
     final data = error.response?.data;
 
-    String message = "Something went wrong";
+    String message = AppStrings.somethingWentWrong;
 
     if (data is Map<String, dynamic>) {
       message = data["message"] ??
@@ -64,29 +65,29 @@ class ErrorHandler {
         return AppException(message, code: statusCode);
 
       case 401:
-        return AppException("Unauthorized", code: statusCode);
+        return AppException(AppStrings.unAuthorized, code: statusCode);
 
       case 403:
-        return AppException("Forbidden request", code: statusCode);
+        return AppException(AppStrings.forbiddenRequest, code: statusCode);
 
       case 404:
-        return AppException("Resource not found", code: statusCode);
+        return AppException(AppStrings.recourseNotFound, code: statusCode);
 
       case 408:
-        return AppException("Request timeout", code: statusCode);
+        return AppException(AppStrings.receiveTimeOut, code: statusCode);
 
       case 422:
         return AppException(message, code: statusCode);
 
       case 500:
         return AppException(
-          "Internal server error",
+          AppStrings.internalServerError,
           code: statusCode,
           data: data,
         );
 
       case 503:
-        return AppException("Service unavailable", code: statusCode);
+        return AppException(AppStrings.serviceUnavailable, code: statusCode);
 
       default:
         return AppException(message, code: statusCode);
