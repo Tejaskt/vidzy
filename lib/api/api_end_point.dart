@@ -24,4 +24,8 @@ class ApiEndPoint {
   /// BASE URL FOR USERS
   static const String baseUrlUsers = '$baseUrlDummyJson/users/';
 
+  /// BASE URL : IMAGE NOT AVAILABLE.
+  /// https://dummyimage.com/
+  static const String baseUrlImageNotAvailable = '$baseUrlDummyJson/400x400/000/fff&text=N/A';
+
 }

@@ -5,8 +5,6 @@ var constants = Constants._shared;
 class Constants {
   static final _shared = Constants();
 
-  static final double blurRadius8 = 8.sp;
-
   static final double cornerRadius4 = 4.sp;
   static final double cornerRadius6 = 6.sp;
   static final double cornerRadius8 = 8.sp;
@@ -21,13 +19,6 @@ class Constants {
   static final double cornerRadius40 = 40.sp;
   static final double cardCornerRadius = 18.sp;
 
-  static final double bottomSheetScrollerWidth = 30.sp;
-  static final double bottomSheetScrollerHeight = 5.sp;
-
-  static final double controlHeight = 28.sp;
-  static final double buttonHeight = 4.sp;
-  static final double logoutButtonHeight = 24.sp;
-
   static final double padding4 = 4.sp;
   static final double padding6 = 6.sp;
   static final double padding8 = 8.sp;
@@ -37,13 +28,10 @@ class Constants {
   static final double padding16 = 16.sp;
   static final double padding20 = 20.sp;
 
-  static final double spacingRow6 = 10.sp;
-  static final double spacingColumn8 = 8.sp;
+  static final double spacingRow10 = 10.sp;
+  static final double spacingColumn6 = 6.sp;
+  static final double gridSpacing = 10.sp;
 
-  static final double elevation = 4.sp;
-
-  static final double borderWidth6px = 6.sp;
-  static final double navBarHeight = 4.sp;
   static final double size28px = 22.sp;
   static final double size24px = 20.sp;
   static final double size20px = 18.sp;
@@ -63,29 +51,9 @@ class Constants {
   final double fontSize12px = 14.sp;
   final double fontSize10px = 12.sp;
 
-  static double bottomNavHeight = 44.sp;
-  final int pageSize = 10;
-  static final int otherTypeId = 101;
-
-  static final int maxLength3 = 3;
-  static final int maxLength5 = 5;
-  static final int maxLength6 = 6;
-  static final int maxLength10 = 10;
-  static final int maxLength12 = 12;
-  static final int maxLength14 = 14;
-  static final int maxLength15 = 15;
-  static final int maxLength17 = 17;
-  static final int maxLength20 = 20;
-  static final int maxLength30 = 30;
-  static final int maxLength34 = 34;
-  static final int maxLength40 = 40;
-  static final int maxLength50 = 50;
-  static final int maxLength64 = 64;
-  static final int maxLength100 = 100;
-  static final int maxLength150 = 150;
   static final int maxLength200 = 200;
-  static final int maxLength300 = 300;
-  static final int maxLength400 = 400;
-  static final int maxLength500 = 500;
-  static final int maxLength1000 = 1000;
+
+  static final double imageWidth25 = 25.sp;
+  static final double imageHeight25 = 25.sp;
+
 }

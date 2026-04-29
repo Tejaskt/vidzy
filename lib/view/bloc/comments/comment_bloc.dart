@@ -1,6 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vidzy/api/model/comment_model.dart';
 import 'package:vidzy/api/service/comment_service.dart';
 import 'package:vidzy/core/error/app_exception.dart';

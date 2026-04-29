@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vidzy/core/constants.dart';
+import 'package:vidzy/res/app_strings.dart';
 import 'package:vidzy/res/spaces.dart';
-import 'package:vidzy/view/bloc/post/post_bloc.dart';
-import 'package:vidzy/view/widgets/test_item.dart';
+import 'package:vidzy/view/bloc/feed/feed_bloc.dart';
+import 'package:vidzy/view/widgets/video_item.dart';
 import '../../../res/app_colors.dart';
 import '../../../res/app_fonts.dart';
-import '../../bloc/video/video_bloc.dart';
 
-class TestScreen extends StatefulWidget {
-
+class FeedScreen extends StatefulWidget {
   final String category;
-  const TestScreen({super.key, required this.category });
+
+  const FeedScreen({super.key, required this.category});
 
   @override
-  State<TestScreen> createState() => _TestScreenState();
+  State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _TestScreenState extends State<TestScreen> {
-
+class _FeedScreenState extends State<FeedScreen> {
   int _activeIndex = -1;
+  int _lastTriggeredIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    context.read<VideoBloc>().add(FetchVideos(category: widget.category));
-    context.read<PostBloc>().add(FetchPosts());
-    //context.read<PostBloc>().add(FetchUserImage());
+    context.read<FeedBloc>().add(FetchFeedItem(videoCategory: widget.category));
   }
 
   int currentIndex = 0;
@@ -42,43 +40,63 @@ class _TestScreenState extends State<TestScreen> {
           style: AppFonts.txtStyle.copyWith(color: AppColors.white),
         ),
       ),
-      body: BlocBuilder<VideoBloc, VideoState>(
-        buildWhen: (prev, curr) => prev != curr ,
+      body: BlocBuilder<FeedBloc, FeedState>(
+        buildWhen: (prev, curr) => prev != curr,
         builder: (context, state) {
-
-          if (state is VideoStateLoading) {
+          if (state is FeedLoading) {
             return Center(child: const CircularProgressIndicator());
           }
 
-          if(state is VideoStateError){
-            return Center(child: Text(state.message));
+          if (state is FeedError) {
+            return Center(
+              child: Column(
+                spacing: Constants.spacingColumn6,
+                mainAxisAlignment: .center,
+                children: [
+                  Text(
+                    state.message,
+                    style: AppFonts.latoRegular.copyWith(
+                      color: AppColors.blue,
+                      fontSize: constants.fontSize16px,
+                    ),
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () => context.read<FeedBloc>().add(
+                      FetchFeedItem(videoCategory: widget.category),
+                    ),
+                    child: Text(AppStrings.retry),
+                  ),
+                ],
+              ),
+            );
           }
 
-          if (state is VideoStateLoaded) {
+          if (state is FeedLoaded) {
             return Stack(
               children: [
-
                 ListView.builder(
-                  itemCount: state.videos.length,
+                  itemCount: state.feedItem.length,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) {
-
-                    if (index >= state.videos.length - 3) {
-                      context.read<VideoBloc>().add(LoadMoreVideos(category: widget.category));
-                      context.read<PostBloc>().add(LoadMorePosts()) ;//state.videos.length));
+                    if (index >= state.feedItem.length - 3 && index != _lastTriggeredIndex) {
+                      _lastTriggeredIndex = index;
+                      context.read<FeedBloc>().add(
+                        LoadMoreFeedItem(videoCategory: widget.category),
+                      );
                     }
 
-                    return TestItem(
-                      video: state.videos[index],
+                    return VideoItem(
+                      feedItem: state.feedItem[index],
                       isActive: index == _activeIndex,
-                      postIndex: index,//currentIndex + 1,
-                      onVisible : (){
-                        if(_activeIndex != index){
+                      postIndex: index,
+                      onVisible: () {
+                        if (_activeIndex != index) {
                           setState(() {
                             _activeIndex = index;
                           });
                         }
-                      }
+                      },
                     );
                   },
                 ),
@@ -100,7 +118,6 @@ class _TestScreenState extends State<TestScreen> {
                       ),
                     ),
                   ),
-
               ],
             );
           }
