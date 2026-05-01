@@ -33,7 +33,7 @@ class VideoItem extends StatefulWidget {
   State<VideoItem> createState() => _VideoItemState();
 }
 
-class _VideoItemState extends State<VideoItem> {
+class _VideoItemState extends State<VideoItem>{
   BetterPlayerController? _betterPlayerController;
   bool _isInitialized = false;
 
@@ -65,6 +65,8 @@ class _VideoItemState extends State<VideoItem> {
         controlsConfiguration: BetterPlayerControlsConfiguration(
           showControls: true,
           enableOverflowMenu: false,
+          enableFullscreen: false,
+          showControlsOnInitialize: false
         ),
       ),
       betterPlayerDataSource: BetterPlayerDataSource(
@@ -88,6 +90,7 @@ class _VideoItemState extends State<VideoItem> {
       }
     });
   }
+
 
   @override
   void didUpdateWidget(covariant VideoItem oldWidget) {

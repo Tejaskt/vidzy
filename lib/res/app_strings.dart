@@ -30,6 +30,7 @@ class AppStrings {
 
   /// dashboard screen
   static const String chooseCategory = 'Choose Category';
+  static const String enterCategoryHint = 'enter category here';
 
   /// Video Item
   static const String qualityAuto = 'Auto';

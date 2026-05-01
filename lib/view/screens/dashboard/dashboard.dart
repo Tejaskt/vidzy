@@ -9,8 +9,12 @@ import 'package:vidzy/view/screens/reel/feed_screen.dart';
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+
+    TextEditingController txtController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.deepPurpleAccent,
@@ -26,6 +30,7 @@ class Dashboard extends StatelessWidget {
           child: Column(
             children: [
               spaceH10,
+
               SizedBox(
                 width: .infinity,
                 child: Card(
@@ -41,6 +46,37 @@ class Dashboard extends StatelessWidget {
                 ),
               ),
               spaceH10,
+
+              TextField(
+                controller: txtController,
+                style: AppFonts.latoRegular.copyWith(color: AppColors.purple),
+                decoration: InputDecoration(
+                  hintText: AppStrings.enterCategoryHint,
+                  hintStyle: AppFonts.latoRegular.copyWith(
+                    color: AppColors.purple,
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      if (txtController.text.isNotEmpty &&
+                          txtController.text != '') {
+                        _navigationToVideoScreen(
+                          videoCategory: txtController.text,
+                          context: context,
+                        );
+                      }
+                    },
+                    icon: Icon(Icons.search_rounded),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      Constants.cornerRadius40,
+                    ),
+                  ),
+                ),
+              ),
+
+              spaceH10,
+
               Expanded(
                 child: GridView.builder(
                   itemCount: AppStrings.categoryList.length,
@@ -53,17 +89,17 @@ class Dashboard extends StatelessWidget {
                     final item = AppStrings.categoryList[index];
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FeedScreen(category: item),
-                          ),
+                        _navigationToVideoScreen(
+                          videoCategory: item,
+                          context: context,
                         );
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColors.deepPurpleAccent,
-                          borderRadius: BorderRadius.all(Radius.circular(Constants.cornerRadius16)),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(Constants.cornerRadius16),
+                          ),
                         ),
                         child: Center(
                           child: Text(
@@ -81,6 +117,18 @@ class Dashboard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _navigationToVideoScreen({
+    required String videoCategory,
+    required BuildContext context,
+  }) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FeedScreen(category: videoCategory),
       ),
     );
   }
