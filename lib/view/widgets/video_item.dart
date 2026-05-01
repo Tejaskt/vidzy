@@ -63,14 +63,19 @@ class _VideoItemState extends State<VideoItem> {
         ),
         fit: .cover,
         controlsConfiguration: BetterPlayerControlsConfiguration(
-          showControls: false,
+          showControls: true,
+          enableOverflowMenu: false,
         ),
       ),
       betterPlayerDataSource: BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
         widget.feedItem.video?.videoUrl ?? widget.imageNotAvailable,
-        cacheConfiguration: const BetterPlayerCacheConfiguration(
+        cacheConfiguration: BetterPlayerCacheConfiguration(
           useCache: true,
+          key: videoUrl,
+          preCacheSize: 5 * 1024 * 1024, // 5MB
+          maxCacheSize: 100 * 1024 * 1024, // 100MB
+          maxCacheFileSize: 15 * 1024 * 1024, // 15MB
         ),
       ),
     );
@@ -120,9 +125,9 @@ class _VideoItemState extends State<VideoItem> {
   Widget build(BuildContext context) {
     return VisibilityDetector(
       key: Key(
-          widget.feedItem.video?.videoUrl ??
-          widget.feedItem.post?.title ??
-          UniqueKey().toString()
+        widget.feedItem.video?.videoUrl ??
+            widget.feedItem.post?.title ??
+            UniqueKey().toString(),
       ),
       onVisibilityChanged: (info) {
         if (!mounted) return;
@@ -144,20 +149,24 @@ class _VideoItemState extends State<VideoItem> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // --- Header --- \\
               Row(
                 children: [
-
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(Constants.cornerRadius40),
+                    borderRadius: BorderRadius.circular(
+                      Constants.cornerRadius40,
+                    ),
                     child: CachedNetworkImage(
                       width: Constants.imageWidth25,
                       height: Constants.imageHeight25,
                       fit: .cover,
-                      imageUrl: widget.feedItem.video?.thumbnail ?? widget.imageNotAvailable,
-                      placeholder: (context, url) => CircleAvatar(child: _smallLoader()),
-                      errorWidget: (context, url, error) => CircleAvatar(child: Icon(Icons.person)),
+                      imageUrl:
+                          widget.feedItem.video?.thumbnail ??
+                          widget.imageNotAvailable,
+                      placeholder: (context, url) =>
+                          CircleAvatar(child: _smallLoader()),
+                      errorWidget: (context, url, error) =>
+                          CircleAvatar(child: Icon(Icons.person)),
                     ),
                   ),
 
@@ -205,7 +214,8 @@ class _VideoItemState extends State<VideoItem> {
               SpaceH5(),
 
               Text(
-                widget.feedItem.post?.tags.map((tag) => '#$tag').join(' ') ?? AppStrings.tagsNA,
+                widget.feedItem.post?.tags.map((tag) => '#$tag').join(' ') ??
+                    AppStrings.tagsNA,
                 style: AppFonts.latoRegular.copyWith(
                   fontSize: constants.fontSize16px,
                   color: AppColors.blue,
@@ -217,18 +227,19 @@ class _VideoItemState extends State<VideoItem> {
 
               // --- Video or Thumbnail --- \\
               AspectRatio(
-                aspectRatio: 1 / 1,
+                aspectRatio: 1/1,
                 child: ClipRRect(
                   borderRadius: .circular(Constants.cornerRadius14),
                   child: _betterPlayerController != null && _isInitialized
                       ? BetterPlayer(controller: _betterPlayerController!)
                       : CachedNetworkImage(
-                          imageUrl: widget.feedItem.video?.thumbnail ?? widget.imageNotAvailable,
+                          imageUrl:
+                              widget.feedItem.video?.thumbnail ??
+                              widget.imageNotAvailable,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => ShimmerEffect(),
-                          errorWidget: (_, _, _) => Center(
-                            child: Icon(Icons.broken_image),
-                          ),
+                          errorWidget: (_, _, _) =>
+                              Center(child: Icon(Icons.broken_image)),
                         ),
                 ),
               ),
@@ -240,9 +251,7 @@ class _VideoItemState extends State<VideoItem> {
                 widget.feedItem.post?.body ?? AppStrings.bodyNA,
                 maxLines: 6,
                 overflow: TextOverflow.ellipsis,
-                style: AppFonts.latoRegular.copyWith(
-                  color: AppColors.purple,
-                ),
+                style: AppFonts.latoRegular.copyWith(color: AppColors.purple),
               ),
 
               SpaceH10(),
@@ -280,14 +289,10 @@ class _VideoItemState extends State<VideoItem> {
                         builder: (context) => commentSheet(),
                       );
                     },
-                    icon: Icon(
-                      Icons.comment,
-                      size: Constants.size24px,
-                    ),
+                    icon: Icon(Icons.comment, size: Constants.size24px),
                   ),
                 ],
               ),
-
             ],
           ),
         ),
