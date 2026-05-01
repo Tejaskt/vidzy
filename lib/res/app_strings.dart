@@ -29,7 +29,7 @@ class AppStrings {
   static const String retry = 'Retry';
 
   /// dashboard screen
-  static const String chooseCategory = 'Choose Category';
+  static const String chooseCategory = 'Popular Categories';
   static const String enterCategoryHint = 'enter category here';
 
   /// Video Item
